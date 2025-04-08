@@ -1,30 +1,27 @@
 import { expandToString, Generated } from "langium/generate"
-import { Attribute, LocalEntity, Model, isLocalEntity, isModule } from "../../../../../../language/generated/ast.js"
+import { Attribute, LocalEntity, Model, isLocalEntity } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 import { processRelations, RelationInfo } from "../../../../../util/relations.js"
 
-export function generate(model: Model, target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
 
     const entities_folder = target_folder + '/Entities'
 
-    const modules =  model.abstractElements.filter(isModule);
+    //const modules =  model.abstractElements.filter(isModule);
   
-    const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
+    //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
   
-    const relation_maps = processRelations(all_entities)
+    const relation_maps = processRelations(listClassCRUD)
 
     fs.mkdirSync(entities_folder, {recursive: true})
 
-    for(const mod of modules) {
-        const mod_classes = mod.elements.filter(isLocalEntity)
-        for(const cls of mod_classes) {
-            let relationsMapping = ""
-            const {relations} = getAttrsAndRelations(cls, relation_maps)
-            relationsMapping += generateRelationsParameter(cls, relations)
-            relationsMapping += ";"
-            fs.writeFileSync(path.join(entities_folder,`${cls.name}Mapper.cs`), generateMappers(model, cls, relationsMapping))
-        }
+    for(const cls of listClassCRUD) {
+        let relationsMapping = ""
+        const {relations} = getAttrsAndRelations(cls, relation_maps)
+        relationsMapping += generateRelationsParameter(cls, relations)
+        relationsMapping += ";"
+        fs.writeFileSync(path.join(entities_folder,`${cls.name}Mapper.cs`), generateMappers(model, cls, relationsMapping))
     }
 }
 

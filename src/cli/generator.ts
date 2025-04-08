@@ -1,4 +1,4 @@
-import type { Model } from '../language/generated/ast.js';
+import type { Model, UseCase } from '../language/generated/ast.js';
 import { GenerateOptions } from './main.js';
 import { generate as pythonGenerate } from './backend/python/generator.js';
 import { generate as javaGenerate } from './backend/java/generator.js';
@@ -10,7 +10,7 @@ import { generate as opaGenerate } from './opa/generator.js'
 import path from 'path';
 import chalk from 'chalk';
 
-export function generate(model: Model, filePath: string, destination: string | undefined, opts: GenerateOptions): string {
+export function generate(model: Model, usecase: UseCase, filePath: string, destination: string | undefined, opts: GenerateOptions): string {
     const final_destination = extractDestination(filePath, destination);
 
     if (opts.only_back) {
@@ -18,7 +18,7 @@ export function generate(model: Model, filePath: string, destination: string | u
         if (model.configuration?.language === 'python') {
             pythonGenerate(model, final_destination);
         } else if (model.configuration?.language?.startsWith("csharp")) {
-            csharpGenerator(model, final_destination);
+            csharpGenerator(model, usecase, final_destination);
         } else if (model.configuration?.language === "java") {
             javaGenerate(model, final_destination);
         }
@@ -39,7 +39,7 @@ export function generate(model: Model, filePath: string, destination: string | u
         if (model.configuration?.language === 'python') {
             pythonGenerate(model, final_destination);
         } else if (model.configuration?.language?.startsWith("csharp")) {
-            csharpGenerator(model, final_destination);
+            csharpGenerator(model, usecase, final_destination);
         } else if (model.configuration?.language === 'java') {
             javaGenerate(model, final_destination);
         }

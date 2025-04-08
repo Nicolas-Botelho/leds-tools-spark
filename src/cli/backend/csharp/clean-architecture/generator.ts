@@ -1,4 +1,4 @@
-import { Model } from "../../../../language/generated/ast.js"
+import { isUseCase, isUseCasesModel, LocalEntity, Model, UseCase } from "../../../../language/generated/ast.js"
 import fs from "fs";
 import { generate as generateInfra } from "./Infrastructure/generate.js"
 import { generate as generateTest } from "./DomainTest/generate.js"
@@ -7,7 +7,7 @@ import { generate as generateDomain } from "./Domain/generate.js"
 import { generate as generateApplication } from "./Application/generate.js"
 import { generate as generateInfraTest } from "./InfraTest/generate.js"
 
-export function generate(model: Model, target_folder: string) : void {
+export function generate(model: Model, usecase: UseCase, target_folder: string) : void {
 
     const application_folder = target_folder + `/${model.configuration?.name}.Application`
     const domain_folder = target_folder + `/${model.configuration?.name}.Domain`
@@ -25,9 +25,28 @@ export function generate(model: Model, target_folder: string) : void {
 
     generateInfra(model, infrastructure_folder);
     generateTest(model, domain_test_folder);
-    generateWeb(model, webApi_folder);
     generateDomain(model, domain_folder);
-    generateApplication(model, application_folder);
     generateInfraTest(model, infra_test_folder);
 
+    const listUCM = model.abstractElements.filter(isUseCasesModel);
+
+    if ((listUCM.length != 0)) {
+
+        const listClassCRUD: LocalEntity[] = [];
+
+        for (const ucm of listUCM) {
+            const listElem = ucm.elements.filter(isUseCase);
+            for (const elem of listElem) {
+                if ((elem.uctype == 'crud') && (elem.entity ?? "" != "")) {
+                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                    //console.log("push " + elem.entity?.ref?.name);
+                }
+            }
+        }
+
+        if (listClassCRUD.length != 0){
+            generateWeb(model, listClassCRUD, webApi_folder);
+            generateApplication(model, listClassCRUD, application_folder);
+        }
+    }
 }

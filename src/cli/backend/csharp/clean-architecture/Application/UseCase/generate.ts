@@ -1,5 +1,5 @@
 import { expandToString } from "langium/generate";
-import { Attribute, LocalEntity, Model, isLocalEntity, isModule } from "../../../../../../language/generated/ast.js"
+import { Attribute, LocalEntity, Model, isLocalEntity } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
 import { RelationInfo, processRelations } from "../../../../../util/relations.js";
@@ -9,45 +9,42 @@ import { generate as generateUpdate } from "./Case/UpdateCase/generate.js"
 import { generate as generateGetAll } from "./Case/GetAllCase/generate.js"
 import { generate as generateGetById } from "./Case/GetByIdCase/generate.js"
 
-export function generate(model: Model, target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
 
     const BaseCase_Folder = target_folder + "/BaseCase"
     fs.mkdirSync(BaseCase_Folder, {recursive: true})
     generateBaseCase(model, BaseCase_Folder)
 
-    const modules =  model.abstractElements.filter(isModule);
     const entities_folder = target_folder + "/Entities"
 
-    for(const mod of modules) {
-        const modules =  model.abstractElements.filter(isModule);
-        const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
-        const relation_maps = processRelations(all_entities)
-        const mod_classes = mod.elements.filter(isLocalEntity)
-        for(const cls of mod_classes) {
+    //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
 
-            const { relations } = getAttrsAndRelations(cls, relation_maps)
+    const relation_maps = processRelations(listClassCRUD)
+
+    for(const cls of listClassCRUD) {
+
+        const { relations } = getAttrsAndRelations(cls, relation_maps)
             
-            const Class_Folder = entities_folder + `/${cls.name}Case`
-            fs.mkdirSync(Class_Folder, {recursive: true})
+        const Class_Folder = entities_folder + `/${cls.name}Case`
+        fs.mkdirSync(Class_Folder, {recursive: true})
 
-            const Create_Folder = Class_Folder + `/Create${cls.name}`
-            const Delete_Folder = Class_Folder + `/Delete${cls.name}`
-            const Update_Folder = Class_Folder + `/Update${cls.name}`
-            const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
-            const GetById_Folder = Class_Folder + `/GetById${cls.name}`
+        const Create_Folder = Class_Folder + `/Create${cls.name}`
+        const Delete_Folder = Class_Folder + `/Delete${cls.name}`
+        const Update_Folder = Class_Folder + `/Update${cls.name}`
+        const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
+        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
 
-            fs.mkdirSync(Create_Folder, {recursive: true})
-            fs.mkdirSync(Delete_Folder, {recursive: true})
-            fs.mkdirSync(Update_Folder, {recursive: true})
-            fs.mkdirSync(GetAll_Folder, {recursive: true})
-            fs.mkdirSync(GetById_Folder, {recursive: true})
+        fs.mkdirSync(Create_Folder, {recursive: true})
+        fs.mkdirSync(Delete_Folder, {recursive: true})
+        fs.mkdirSync(Update_Folder, {recursive: true})
+        fs.mkdirSync(GetAll_Folder, {recursive: true})
+        fs.mkdirSync(GetById_Folder, {recursive: true})
 
-            generateCreate(model, Create_Folder, cls, relations)
-            generateDelete(model, Delete_Folder, cls, relations)
-            generateUpdate(model, Update_Folder, cls, relations)
-            generateGetAll(model, GetAll_Folder, cls, relations)
-            generateGetById(model, GetById_Folder, cls, relations)
-        }
+        generateCreate(model, Create_Folder, cls, relations)
+        generateDelete(model, Delete_Folder, cls, relations)
+        generateUpdate(model, Update_Folder, cls, relations)
+        generateGetAll(model, GetAll_Folder, cls, relations)
+        generateGetById(model, GetById_Folder, cls, relations)
     }
 }
 

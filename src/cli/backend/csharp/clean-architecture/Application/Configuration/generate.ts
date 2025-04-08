@@ -1,26 +1,25 @@
 import { expandToString } from "langium/generate"
-import { Model, isLocalEntity, isModule } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 
-export function generate(model: Model, target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
 
-    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), generateServiceExtensions(model))
+    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), generateServiceExtensions(model, listClassCRUD))
 }
 
-function generateAdd(model: Model) : string {
-    const modules =  model.abstractElements.filter(isModule);
+function generateAdd(model: Model, listClassCRUD: LocalEntity[]) : string {
+
     let adds = ""
-    for(const mod of modules) {
-        const mod_classes = mod.elements.filter(isLocalEntity)
-        for(const cls of mod_classes) {
-            adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
-        }
+
+    for(const cls of listClassCRUD) {
+        adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
     }
+    //}
     return adds
 }
 
-function generateServiceExtensions(model: Model) : string {
+function generateServiceExtensions(model: Model, listClassCRUD: LocalEntity[]) : string {
     return expandToString`
 using FluentValidation;
 using MediatR;
@@ -44,7 +43,7 @@ namespace ${model.configuration?.name}.Application.Services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             services.AddTransient<IService, EmailService>();
-            ${generateAdd(model)}
+            ${generateAdd(model, listClassCRUD)}
         }
     }
 }`

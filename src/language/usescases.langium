@@ -13,8 +13,11 @@ UseCase:
     'usecase' id=QualifiedName ('extends' superType=[UseCase:QualifiedName])? '{'
         Name
         Description?
+        ('uctype' ':' uctype=UCTYPE
+        'classe' ':' entity=[LocalEntity:QualifiedName])?
         'performer' ':' actors+=[Actor:QualifiedName] (',' actors+=[Actor:QualifiedName])*
         (events+=Event)*
+        
     '}'
     (Comment)?
 ;

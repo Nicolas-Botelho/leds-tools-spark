@@ -1,21 +1,16 @@
 import { expandToStringWithNL } from "langium/generate";
-import { LocalEntity, Model, isLocalEntity, isModule } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-export function generate(model: Model, target_folder: string) : void {
-    const modules =  model.abstractElements.filter(isModule);
+export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
 
     const entities_folder = target_folder + '/Entities'
     fs.mkdirSync(entities_folder, {recursive: true})
-    
 
     fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
-
-    for(const mod of modules) {
-        const mod_classes = mod.elements.filter(isLocalEntity)
-        for(const cls of mod_classes) {
-            fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateService(model, cls))
-        }
+    
+    for(const cls of listClassCRUD) {
+        fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateService(model, cls))
     }
 }
 
