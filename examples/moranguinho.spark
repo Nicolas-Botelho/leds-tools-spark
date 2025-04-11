@@ -23,3 +23,14 @@ module Moranguinho {
     
     
 }
+
+usmodel Cad {
+    actor Adm
+
+    usecase CRUD {
+        name : "cadastro de propriedade"
+        uctype : crud
+        classe : Moranguinho.Propriedade
+        performer : Cad.Adm
+    }
+}

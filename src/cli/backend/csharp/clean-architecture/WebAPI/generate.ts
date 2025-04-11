@@ -29,7 +29,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
     helperGenerator(model, target_folder)
     programGenerator(model, target_folder)
     configGenerator(model, config_folder)
-    extensionsGenerator(model, extensions_folder)
+    extensionsGenerator(model, listClassCRUD, extensions_folder)
     propertiesGenerator(model, properties_folder)
     generateControllers(model, listClassCRUD, controllers_folder)
     generateScripts(model, listClassCRUD, scripts_folder)

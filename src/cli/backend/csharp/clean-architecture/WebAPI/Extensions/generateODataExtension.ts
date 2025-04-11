@@ -1,7 +1,7 @@
 import { expandToString } from "langium/generate";
-import { isLocalEntity, isModule, Model } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 
-export function generateODataExtension(model: Model): string{
+export function generateODataExtension(model: Model, listClassCRUD: LocalEntity[]): string{
     return expandToString`
 using ${model.configuration?.name}.Application.DTOs.Entities.Response;
 using Microsoft.AspNetCore.OData;
@@ -15,7 +15,7 @@ namespace ${model.configuration?.name}.WebApi.Extensions
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new();
-            ${generateEntitySets(model)}
+            ${generateEntitySets(model, listClassCRUD)}
             return builder.GetEdmModel();
         }
 
@@ -39,16 +39,16 @@ namespace ${model.configuration?.name}.WebApi.Extensions
 }`
 }
 
-function generateEntitySets(model: Model) : string {
+function generateEntitySets(model: Model, listClassCRUD: LocalEntity[]) : string {
   
-    const modules =  model.abstractElements.filter(isModule);
+    // const modules =  model.abstractElements.filter(isModule);
     let entitySets = "";
     
-    for(const mod of modules) {
-        for(const cls of mod.elements.filter(isLocalEntity)) {
-            entitySets += `builder.EntitySet<${cls.name}ResponseDTO>("${cls.name.toLowerCase()}"); \n`
-        }
+    //for(const mod of modules) {
+    for(const cls of listClassCRUD) {
+        entitySets += `builder.EntitySet<${cls.name}ResponseDTO>("${cls.name.toLowerCase()}"); \n`
     }
+    //}
 
     return entitySets;
   
