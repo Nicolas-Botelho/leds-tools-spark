@@ -1,4 +1,4 @@
-import type { Model, UseCase } from '../language/generated/ast.js';
+import { isUseCasesModel, isUseCase, Model, UseCase, LocalEntity  } from '../language/generated/ast.js';
 import { GenerateOptions } from './main.js';
 import { generate as pythonGenerate } from './backend/python/generator.js';
 import { generate as javaGenerate } from './backend/java/generator.js';
@@ -13,18 +13,33 @@ import chalk from 'chalk';
 export function generate(model: Model, usecase: UseCase, filePath: string, destination: string | undefined, opts: GenerateOptions): string {
     const final_destination = extractDestination(filePath, destination);
 
+    const listUCM = model.abstractElements.filter(isUseCasesModel);
+    const listClassCRUD: LocalEntity[] = [];
+    
+    if ((listUCM.length != 0)) { 
+        
+        for (const ucm of listUCM) {
+            const listElem = ucm.elements.filter(isUseCase);
+            for (const elem of listElem) {
+                if ((elem.uctype == 'crud') && (elem.entity ?? "" != "")) {
+                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                }
+            }
+        }
+    }
+
     if (opts.only_back) {
         // Backend generation
         if (model.configuration?.language === 'python') {
             pythonGenerate(model, final_destination);
         } else if (model.configuration?.language?.startsWith("csharp")) {
-            csharpGenerator(model, usecase, final_destination);
+            csharpGenerator(model, listClassCRUD, final_destination);
         } else if (model.configuration?.language === "java") {
             javaGenerate(model, final_destination);
         }
     } else if (opts.only_front) {
         // Frontend generation
-        vueVitegenerate(model, final_destination);
+        vueVitegenerate(model, listClassCRUD, final_destination);
     } else if (opts.only_Documentation) {
         // Documentation generation
         docGenerate(model, final_destination);
@@ -39,13 +54,13 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
         if (model.configuration?.language === 'python') {
             pythonGenerate(model, final_destination);
         } else if (model.configuration?.language?.startsWith("csharp")) {
-            csharpGenerator(model, usecase, final_destination);
+            csharpGenerator(model, listClassCRUD, final_destination);
         } else if (model.configuration?.language === 'java') {
             javaGenerate(model, final_destination);
         }
 
         docGenerate(model, final_destination);
-        vueVitegenerate(model, final_destination);
+        vueVitegenerate(model, listClassCRUD, final_destination);
         opaGenerate(model, final_destination);
     }
 

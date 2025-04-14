@@ -7,12 +7,9 @@ import { processRelations, RelationInfo } from "../../../../../util/relations.js
 export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
 
     const entities_folder = target_folder + '/Entities'
-
-    //const modules =  model.abstractElements.filter(isModule);
   
-    //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
-  
-    const relation_maps = processRelations(listClassCRUD)
+    const listClassCRUDFlat = listClassCRUD.flat(1)
+    const relation_maps = processRelations(listClassCRUDFlat)
 
     fs.mkdirSync(entities_folder, {recursive: true})
 

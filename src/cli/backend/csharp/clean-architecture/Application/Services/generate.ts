@@ -9,7 +9,9 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
 
     fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
     
-    for(const cls of listClassCRUD) {
+    const listClassCRUDFlat = listClassCRUD.flat(1);
+
+    for(const cls of listClassCRUDFlat) {
         fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateService(model, cls))
     }
 }

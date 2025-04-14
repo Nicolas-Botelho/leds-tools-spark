@@ -12,7 +12,9 @@ function generateAdd(model: Model, listClassCRUD: LocalEntity[]) : string {
 
     let adds = ""
 
-    for(const cls of listClassCRUD) {
+    const listClassCRUDFlat = listClassCRUD.flat(1);
+
+    for(const cls of listClassCRUDFlat) {
         adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
     }
     //}

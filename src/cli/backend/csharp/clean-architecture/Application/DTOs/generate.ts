@@ -20,12 +20,10 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
   fs.writeFileSync(path.join(common_folder, "ApiResponse.cs"), generateApiResponse(model))
   fs.writeFileSync(path.join(common_folder, "ResponseBase.cs"), generateResponseBase(model))
 
-  //const modules =  model.abstractElements.filter(isModule);
-  //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
-
-  const relation_maps = processRelations(listClassCRUD)
+  const listClassCRUDFlat = listClassCRUD.flat(1)
+  const relation_maps = processRelations(listClassCRUDFlat)
   
-  for(const cls of listClassCRUD) {
+  for(const cls of listClassCRUDFlat) {
       const { relations } = getAttrsAndRelations(cls, relation_maps)
       const cls_name = `${cls.name}`
       fs.writeFileSync(path.join(response_folder, `${cls_name}ResponseDTO.cs`), generateResponseDTO(model, cls, relations))

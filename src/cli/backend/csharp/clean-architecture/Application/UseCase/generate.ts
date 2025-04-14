@@ -17,9 +17,8 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
 
     const entities_folder = target_folder + "/Entities"
 
-    //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
-
-    const relation_maps = processRelations(listClassCRUD)
+    const listClassCRUDFlat = listClassCRUD.flat(1)
+    const relation_maps = processRelations(listClassCRUDFlat)
 
     for(const cls of listClassCRUD) {
 
