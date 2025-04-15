@@ -20,6 +20,52 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
         relationsMapping += ";"
         fs.writeFileSync(path.join(entities_folder,`${cls.name}Mapper.cs`), generateMappers(model, cls, relationsMapping))
     }
+
+    // const listClassGetbyId = listClassCRUDFlat.filter() //diff ListClassCRUDFlat - ListClassCRUD
+
+    for(const cls of listClassCRUD) {
+      let relationsMapping = ""
+      const {relations} = getAttrsAndRelations(cls, relation_maps)
+      relationsMapping += generateRelationsParameter(cls, relations)
+      relationsMapping += ";"
+      fs.writeFileSync(path.join(entities_folder,`${cls.name}Mapper.cs`), generateMappersGetById(model, cls, relationsMapping))
+  }
+}
+
+function generateMappersGetById(model: Model, cls: LocalEntity, RelationsMapping: string) : string {
+  return expandToString`
+using AutoMapper;
+using ${model.configuration?.name}.Application.DTOs.Entities.Request;
+using ${model.configuration?.name}.Application.DTOs.Entities.Response;
+using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.GetById;
+using ${model.configuration?.name}.Domain.Entities;
+
+namespace ${model.configuration?.name}.Application.Mappers.Entities
+{
+  public class ${cls.name}Mapper : Profile
+  {
+      public ${cls.name}Mapper()
+      {
+          #region Entidade para DTO's
+          CreateMap<${cls.name}, ${cls.name}ResponseDTO>().ReverseMap();
+          CreateMap<${cls.name}, ${cls.name}RequestDTO>().ReverseMap();
+              
+          #endregion
+
+          #region Entidade para Commads de Caso de Uso
+          CreateMap<${cls.name}, GetById${cls.name}Command>().ReverseMap();
+          #endregion
+
+          #region DTO's para Commads de Caso de Uso
+
+          #endregion
+
+          #region Conversão para api response
+          CreateMap<ApiResponse, ${cls.name}RequestDTO>().ReverseMap();
+          #endregion
+      }
+  }
+}`
 }
 
 function generateMappers(model: Model, cls: LocalEntity, RelationsMapping: string) : string {

@@ -15,14 +15,21 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
 
     const listUCM = model.abstractElements.filter(isUseCasesModel);
     const listClassCRUD: LocalEntity[] = [];
-    
-    if ((listUCM.length != 0)) { 
+    const listRefCRUD: LocalEntity[] = [];
+
+    if ((listUCM.length != 0)) {
         
         for (const ucm of listUCM) {
             const listElem = ucm.elements.filter(isUseCase);
             for (const elem of listElem) {
                 if ((elem.uctype == 'crud') && (elem.entity ?? "" != "")) {
-                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                    const classe: LocalEntity = elem.entity?.ref;
+                    listClassCRUD.push(classe);
+                    
+                    for (const rel of classe.relations) {
+                        listRefCRUD.push(rel.type.ref);
+                    }
+
                 }
             }
         }

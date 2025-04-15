@@ -20,6 +20,20 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
     const listClassCRUDFlat = listClassCRUD.flat(1)
     const relation_maps = processRelations(listClassCRUDFlat)
 
+    for(const cls of listClassCRUDFlat) {
+
+        const { relations } = getAttrsAndRelations(cls, relation_maps)
+            
+        const Class_Folder = entities_folder + `/${cls.name}Case`
+        fs.mkdirSync(Class_Folder, {recursive: true})
+
+        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
+
+        fs.mkdirSync(GetById_Folder, {recursive: true})
+
+        generateGetById(model, GetById_Folder, cls, relations)
+    }
+
     for(const cls of listClassCRUD) {
 
         const { relations } = getAttrsAndRelations(cls, relation_maps)
@@ -31,19 +45,16 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
         const Delete_Folder = Class_Folder + `/Delete${cls.name}`
         const Update_Folder = Class_Folder + `/Update${cls.name}`
         const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
-        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
 
         fs.mkdirSync(Create_Folder, {recursive: true})
         fs.mkdirSync(Delete_Folder, {recursive: true})
         fs.mkdirSync(Update_Folder, {recursive: true})
         fs.mkdirSync(GetAll_Folder, {recursive: true})
-        fs.mkdirSync(GetById_Folder, {recursive: true})
 
         generateCreate(model, Create_Folder, cls, relations)
         generateDelete(model, Delete_Folder, cls, relations)
         generateUpdate(model, Update_Folder, cls, relations)
         generateGetAll(model, GetAll_Folder, cls, relations)
-        generateGetById(model, GetById_Folder, cls, relations)
     }
 }
 
