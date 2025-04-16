@@ -4,7 +4,8 @@ import fs from "fs"
 import path from "path"
 import { capitalizeString } from "../../../../../util/generator-utils.js"
 import { RelationInfo, processRelations } from "../../../../../util/relations.js"
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], target_folder: string) : void {
 
   const common_folder = target_folder + '/Common'
   const entities_folder = target_folder + '/Entities'
@@ -20,10 +21,9 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
   fs.writeFileSync(path.join(common_folder, "ApiResponse.cs"), generateApiResponse(model))
   fs.writeFileSync(path.join(common_folder, "ResponseBase.cs"), generateResponseBase(model))
 
-  const listClassCRUDFlat = listClassCRUD.flat(1)
-  const relation_maps = processRelations(listClassCRUDFlat)
+  const relation_maps = processRelations(listClassRefCRUD)
   
-  for(const cls of listClassCRUDFlat) {
+  for(const cls of listClassRefCRUD) {
       const { relations } = getAttrsAndRelations(cls, relation_maps)
       const cls_name = `${cls.name}`
       fs.writeFileSync(path.join(response_folder, `${cls_name}ResponseDTO.cs`), generateResponseDTO(model, cls, relations))

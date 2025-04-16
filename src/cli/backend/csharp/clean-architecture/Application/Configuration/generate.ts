@@ -3,25 +3,23 @@ import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], target_folder: string) : void {
 
-    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), generateServiceExtensions(model, listClassCRUD))
+    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), generateServiceExtensions(model, listClassRefCRUD))
 }
 
-function generateAdd(model: Model, listClassCRUD: LocalEntity[]) : string {
+function generateAdd(model: Model, listClassRefCRUD: LocalEntity[]) : string {
 
     let adds = ""
 
-    const listClassCRUDFlat = listClassCRUD.flat(1);
-
-    for(const cls of listClassCRUDFlat) {
+    for(const cls of listClassRefCRUD) {
         adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
     }
     //}
     return adds
 }
 
-function generateServiceExtensions(model: Model, listClassCRUD: LocalEntity[]) : string {
+function generateServiceExtensions(model: Model, listClassRefCRUD: LocalEntity[]) : string {
     return expandToString`
 using FluentValidation;
 using MediatR;
@@ -45,7 +43,7 @@ namespace ${model.configuration?.name}.Application.Services
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             services.AddTransient<IService, EmailService>();
-            ${generateAdd(model, listClassCRUD)}
+            ${generateAdd(model, listClassRefCRUD)}
         }
     }
 }`

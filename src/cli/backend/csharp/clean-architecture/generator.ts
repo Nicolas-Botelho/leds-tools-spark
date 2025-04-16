@@ -7,7 +7,7 @@ import { generate as generateDomain } from "./Domain/generate.js"
 import { generate as generateApplication } from "./Application/generate.js"
 // import { generate as generateInfraTest } from "./InfraTest/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
 
     const application_folder = target_folder + `/${model.configuration?.name}.Application`
     const domain_folder = target_folder + `/${model.configuration?.name}.Domain`
@@ -29,7 +29,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
     // generateInfraTest(model, infra_test_folder);
 
     if (listClassCRUD.length != 0){
-        generateWeb(model, listClassCRUD, webApi_folder);
-        generateApplication(model, listClassCRUD, application_folder);
+        generateWeb(model, listClassCRUD, webApi_folder); //listRefCRUD
+        generateApplication(model, listClassCRUD, listRefCRUD, application_folder);
     }
 }

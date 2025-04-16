@@ -8,7 +8,7 @@ import { generate as cleanArchGenerate} from "./clean-architecture/generator.js"
 import { generate as cleanprojectGenerate} from "./clean-architecture/project-generator.js"
 import { generate as cleangenerateDocker } from "./clean-architecture/docker-generator.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
     const target_folder_back = target_folder+"/backend"
     const target_folder_projname = target_folder_back + "/" + model.configuration?.name
 
@@ -22,7 +22,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
         minimalgenerateDocker(model, target_folder_back)
     }
     else{
-        cleanArchGenerate(model, listClassCRUD, target_folder_projname)
+        cleanArchGenerate(model, listClassCRUD, listRefCRUD, target_folder_projname)
         cleanprojectGenerate(model, target_folder_back)
         cleangenerateDocker(model, target_folder_back)
     }

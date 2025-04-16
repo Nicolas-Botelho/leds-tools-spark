@@ -33,11 +33,4 @@ usmodel Cad {
         classe : Moranguinho.Propriedade
         performer : Cad.Adm
     }
-
-    usecase CRUD {
-        name : "cadastro de agricultor"
-        uctype : crud
-        classe : Moranguinho.Agricultor
-        performer : Cad.Adm
-    }
 }
