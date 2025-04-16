@@ -31,5 +31,6 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     if (listClassCRUD.length != 0){
         generateWeb(model, listClassCRUD, webApi_folder); //listRefCRUD
         generateApplication(model, listClassCRUD, listRefCRUD, application_folder);
+        //oi, tudo bem?
     }
 }
