@@ -132,12 +132,7 @@ services:
     depends_on:
       - sqlserver
     environment:
-      SqlServer: "Server=sqlserver,1433;Database=${model.configuration?.name?.toLowerCase()};User ID=sa;Password=Senha@123;Trusted_Connection=False;TrustServerCertificate=True;"
-      ApiKey: ""
-      JwtPrivateKey: ""
-      PasswordSaltKey: ""
-      DefaultFromEmail: ""
-      EmailApiKey: ""`
+      SqlServer: "Server=sqlserver,1433;Database=${model.configuration?.name?.toLowerCase()};User ID=sa;Password=Senha@123;Trusted_Connection=False;TrustServerCertificate=True;"`
 }
 
 function generateLaunchSettings(model: Model): string {
