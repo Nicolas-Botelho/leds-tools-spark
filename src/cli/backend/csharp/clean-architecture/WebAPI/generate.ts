@@ -9,7 +9,7 @@ import { generate as generateControllers } from "./Controllers/generate.js"
 import { generate as generateScripts } from "./Scripts/generate.js"
 import fs from "fs"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
 
     const config_folder = target_folder + "/.config"
     const extensions_folder = target_folder + "/Extensions"
@@ -25,13 +25,15 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
     fs.mkdirSync(scripts_folder, { recursive: true })
     fs.mkdirSync(logs_folder, { recursive: true })
 
+    const listClassRefCRUD = listClassCRUD.concat(listRefCRUD);
+
     projectGenerator(model, target_folder)
     helperGenerator(model, target_folder)
     programGenerator(model, target_folder)
     configGenerator(model, config_folder)
-    extensionsGenerator(model, listClassCRUD, extensions_folder)
+    extensionsGenerator(model, listClassRefCRUD, extensions_folder)
     propertiesGenerator(model, properties_folder)
-    generateControllers(model, listClassCRUD, controllers_folder)
-    generateScripts(model, listClassCRUD, scripts_folder)
+    generateControllers(model, listClassCRUD, listRefCRUD, controllers_folder)
+    generateScripts(model, listClassRefCRUD, scripts_folder)
 
 }

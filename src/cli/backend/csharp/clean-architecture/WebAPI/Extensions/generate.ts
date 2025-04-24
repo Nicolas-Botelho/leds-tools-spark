@@ -4,14 +4,14 @@ import fs from "fs";
 import path from "path";
 import { generateODataExtension } from "./generateODataExtension.js";
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], target_folder: string) : void {
 
     fs.writeFileSync(path.join(target_folder, "AccountContextExtension.cs"), generateAccountContext(model))
     fs.writeFileSync(path.join(target_folder, "BuilderExtension.cs"), generateBuilderExtension(model))
     fs.writeFileSync(path.join(target_folder, "ClaimsPrincipalExtension.cs"), generateClaimsPrincipalExtension(model))
     fs.writeFileSync(path.join(target_folder, "ConfigureCorsPolicy.cs"), generateCorsPolicyExtension(model))
     fs.writeFileSync(path.join(target_folder, "JwtExtension.cs"), generateJwtExtension(model))
-    fs.writeFileSync(path.join(target_folder, "ODataExtension.cs"), generateODataExtension(model, listClassCRUD))
+    fs.writeFileSync(path.join(target_folder, "ODataExtension.cs"), generateODataExtension(model, listClassRefCRUD))
 
 }
 

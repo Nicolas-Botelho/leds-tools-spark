@@ -1,7 +1,7 @@
 import { expandToString } from "langium/generate";
 import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 
-export function generateODataExtension(model: Model, listClassCRUD: LocalEntity[]): string{
+export function generateODataExtension(model: Model, listClassRefCRUD: LocalEntity[]): string{
     return expandToString`
 using ${model.configuration?.name}.Application.DTOs.Entities.Response;
 using Microsoft.AspNetCore.OData;
@@ -15,7 +15,7 @@ namespace ${model.configuration?.name}.WebApi.Extensions
         private static IEdmModel GetEdmModel()
         {
             ODataConventionModelBuilder builder = new();
-            ${generateEntitySets(model, listClassCRUD)}
+            ${generateEntitySets(model, listClassRefCRUD)}
             return builder.GetEdmModel();
         }
 
@@ -39,13 +39,13 @@ namespace ${model.configuration?.name}.WebApi.Extensions
 }`
 }
 
-function generateEntitySets(model: Model, listClassCRUD: LocalEntity[]) : string {
+function generateEntitySets(model: Model, listClassRefCRUD: LocalEntity[]) : string {
   
     // const modules =  model.abstractElements.filter(isModule);
     let entitySets = "";
     
     //for(const mod of modules) {
-    for(const cls of listClassCRUD) {
+    for(const cls of listClassRefCRUD) {
         entitySets += `builder.EntitySet<${cls.name}ResponseDTO>("${cls.name.toLowerCase()}"); \n`
     }
     //}

@@ -3,13 +3,13 @@ import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import { expandToString } from "langium/generate";
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], target_folder: string) : void {
 
     let alternocheck = ""
     let deletefrom = ""
     let altercheck = ""
     
-    for(const cls of listClassCRUD) {
+    for(const cls of listClassRefCRUD) {
         alternocheck += `ALTER TABLE ${cls.name} NOCHECK CONSTRAINT ALL;\n`
         deletefrom += `DELETE FROM ${cls.name};\n`
         altercheck += `ALTER TABLE ${cls.name} WITH CHECK CHECK CONSTRAINT ALL;\n`

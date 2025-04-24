@@ -29,8 +29,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     // generateInfraTest(model, infra_test_folder);
 
     if (listClassCRUD.length != 0){
-        generateWeb(model, listClassCRUD, webApi_folder); //listRefCRUD
+        generateWeb(model, listClassCRUD, listRefCRUD, webApi_folder);
         generateApplication(model, listClassCRUD, listRefCRUD, application_folder);
-        //oi, tudo bem?
     }
 }
