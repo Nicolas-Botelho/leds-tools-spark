@@ -1,4 +1,4 @@
-import { LocalEntity, Model } from "../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../language/generated/ast.js"
 import fs from "fs"
 import { generate as projectGenerator } from "./project-generator.js"
 import { generate as sharedGenerator } from "./Shared/generate.js"
@@ -10,7 +10,7 @@ import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
 import { generate as SecurityGenerator } from "./Security/generate.js"
 import { generate as UseCaseGenerator } from "./UseCase/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
     
     const Shared_folder = target_folder + "/Shared"
     const Services_Folder = target_folder + "/Services"
@@ -34,12 +34,12 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
-    servicesGenerator(model, listClassCRUD, listRefCRUD, Services_Folder)
-    DTOGenerator(model, listClassRefCRUD, DTOs_Folder)
-    InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder)
-    MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder)
-    ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder)
+    servicesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Services_Folder)
+    DTOGenerator(model, listClassRefCRUD, listUCsNotCRUD, DTOs_Folder)
+    InterfacesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Interfaces_Folder)
+    MappersGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Mappers_Folder)
+    ConfigurationGenerator(model, listClassRefCRUD, listUCsNotCRUD, Configuration_Folder)
     SecurityGenerator(model, Security_Folder)
-    UseCaseGenerator(model, listClassCRUD, listRefCRUD, UseCases_Folder)
+    UseCaseGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, UseCases_Folder)
 
 }

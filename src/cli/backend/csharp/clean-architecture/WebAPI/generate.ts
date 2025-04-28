@@ -1,4 +1,4 @@
-import { LocalEntity, Model } from "../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../language/generated/ast.js"
 import { generate as projectGenerator} from "./project-generator.js"
 import { generate as helperGenerator } from "./helpers-generator.js"
 import { generate as programGenerator } from "./program-generator.js"
@@ -9,7 +9,7 @@ import { generate as generateControllers } from "./Controllers/generate.js"
 import { generate as generateScripts } from "./Scripts/generate.js"
 import fs from "fs"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
     const config_folder = target_folder + "/.config"
     const extensions_folder = target_folder + "/Extensions"

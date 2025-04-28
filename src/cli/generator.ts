@@ -17,18 +17,22 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
     const listUCM = model.abstractElements.filter(isUseCasesModel);
     const listClassCRUD: LocalEntity[] = [];
     const listRefCRUD: LocalEntity[] = [];
+    const listUCsNotCRUD: UseCase[] = [];
     
     // Cria uma lista todas as classes que tem casos de uso do tipo CRUD
     for (const ucm of listUCM) {
         const listElem = ucm.elements.filter(isUseCase);
         for (const elem of listElem) {
-            if ((elem.uctype == 'crud') && (elem.entity ?? "" != "") && (!listClassCRUD.includes(elem.entity?.ref as LocalEntity))) {
-                const classe = elem.entity?.ref as LocalEntity;
-                listClassCRUD.push(classe);
-                console.log("classe: " + classe.name);
+            if (elem.uctype == 'crud') {
+                if (elem.entity ?? "" != "") {
+                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                } 
+            }
+            else {
+                listUCsNotCRUD.push(elem as UseCase);
             }
         }
-    }    
+    } 
 
     const listModules = model.abstractElements.filter(isModule);
     const all_entities = []
@@ -96,4 +100,5 @@ function extractDestination(filePath: string, destination?: string) : string {
 
     return destination ?? path.join(path.dirname(filePath))
 }
+
 

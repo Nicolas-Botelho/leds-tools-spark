@@ -1,4 +1,4 @@
-import { LocalEntity, Model } from "../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../language/generated/ast.js"
 import fs from "fs";
 import { generate as generateInfra } from "./Infrastructure/generate.js"
 import { generate as generateTest } from "./DomainTest/generate.js"
@@ -7,7 +7,7 @@ import { generate as generateDomain } from "./Domain/generate.js"
 import { generate as generateApplication } from "./Application/generate.js"
 // import { generate as generateInfraTest } from "./InfraTest/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], usecase: UseCase[], target_folder: string) : void {
 
     const application_folder = target_folder + `/${model.configuration?.name}.Application`
     const domain_folder = target_folder + `/${model.configuration?.name}.Domain`
@@ -29,7 +29,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     // generateInfraTest(model, infra_test_folder);
 
     if (listClassCRUD.length != 0){
-        generateWeb(model, listClassCRUD, listRefCRUD, webApi_folder);
-        generateApplication(model, listClassCRUD, listRefCRUD, application_folder);
+        generateWeb(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, webApi_folder);
+        generateApplication(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, application_folder);
     }
 }
