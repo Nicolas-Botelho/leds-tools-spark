@@ -1,4 +1,4 @@
-import { isUseCase, isUseCasesModel, LocalEntity, Model, UseCase } from "../../../../language/generated/ast.js"
+import { LocalEntity, Model } from "../../../../language/generated/ast.js"
 import fs from "fs";
 import { generate as generateInfra } from "./Infrastructure/generate.js"
 import { generate as generateTest } from "./DomainTest/generate.js"
@@ -7,7 +7,7 @@ import { generate as generateDomain } from "./Domain/generate.js"
 import { generate as generateApplication } from "./Application/generate.js"
 // import { generate as generateInfraTest } from "./InfraTest/generate.js"
 
-export function generate(model: Model, usecase: UseCase, target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
 
     const application_folder = target_folder + `/${model.configuration?.name}.Application`
     const domain_folder = target_folder + `/${model.configuration?.name}.Domain`
@@ -28,24 +28,8 @@ export function generate(model: Model, usecase: UseCase, target_folder: string) 
     generateDomain(model, domain_folder);
     // generateInfraTest(model, infra_test_folder);
 
-    const listUCM = model.abstractElements.filter(isUseCasesModel);
-
-    if ((listUCM.length != 0)) {
-
-        const listClassCRUD: LocalEntity[] = [];
-
-        for (const ucm of listUCM) {
-            const listElem = ucm.elements.filter(isUseCase);
-            for (const elem of listElem) {
-                if ((elem.uctype == 'crud') && (elem.entity ?? "" != "")) {
-                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
-                }
-            }
-        }
-
-        if (listClassCRUD.length != 0){
-            generateWeb(model, listClassCRUD, webApi_folder);
-            generateApplication(model, listClassCRUD, application_folder);
-        }
+    if (listClassCRUD.length != 0){
+        generateWeb(model, listClassCRUD, listRefCRUD, webApi_folder);
+        generateApplication(model, listClassCRUD, listRefCRUD, application_folder);
     }
 }

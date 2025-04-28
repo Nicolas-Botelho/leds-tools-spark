@@ -5,11 +5,13 @@ import path from "path"
 
 export function generate(model: Model, target_folder: string) : void {
 
-    fs.writeFileSync(path.join(target_folder, "BaseController.cs"), generateBaseController(model))
+    fs.writeFileSync(path.join(target_folder, "BaseCRUDController.cs"), generateBaseCRUDController(model))
+
+    fs.writeFileSync(path.join(target_folder, "BaseGetController.cs"), generateBaseGetController(model))
 
 }
 
-function generateBaseController(model: Model): string {
+function generateBaseCRUDController(model: Model): string {
     return expandToString`
 using AutoMapper;
 using ${model.configuration?.name}.Application.DTOs.Common;
@@ -20,7 +22,8 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
 {
-    public class BaseController<GetAllCommand, GetByIdCommand, CreateCommand, UpdateCommand, DeleteCommand, Response> : ODataController
+    public class BaseCRUDController<GetAllCommand, GetByIdCommand, CreateCommand, UpdateCommand, DeleteCommand, Response> :
+        BaseGetController<GetAllCommand, GetByIdCommand, Response>
         where Response : BaseDTO
         where GetAllCommand : IRequest<IQueryable<Response>>, new()
         where GetByIdCommand : IRequest<IQueryable<Response>>
@@ -30,26 +33,9 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
     {
         protected readonly IMediator _mediator;
         protected readonly IMapper _mapper;
-        public BaseController(IMediator mediator, IMapper mapper)
+        
+        public BaseCRUDController(IMediator mediator, IMapper mapper) : base(mediator, mapper)
         {
-            _mediator = mediator;
-            _mapper = mapper;
-        }
-
-        [HttpGet]
-        [EnableQuery(PageSize = 25, MaxExpansionDepth = 3)]
-        public async Task<IQueryable<Response>> GetAll()
-        {
-            var response = await _mediator.Send(new GetAllCommand(), new CancellationToken());
-            return response;
-        }
-
-        [HttpGet("{id}")]
-        [EnableQuery(MaxExpansionDepth = 3)]
-        public async Task<IQueryable<Response>> GetById(Guid id)
-        {
-
-            return await _mediator.Send(_mapper.Map<GetByIdCommand>(id), new CancellationToken());
         }
 
         [HttpPost]
@@ -130,6 +116,50 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
             var badRequest = new BadRequestObjectResult(apiResponse);
             badRequest.StatusCode = apiResponse.StatusCode;
             return badRequest;
+        }
+    }
+}`
+}
+
+function generateBaseGetController(model: Model): string {
+    return expandToString`
+using AutoMapper;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
+
+namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
+{
+    public class BaseGetController<GetAllCommand, GetByIdCommand, Response> : ODataController
+        where Response : BaseDTO
+        where GetAllCommand : IRequest<IQueryable<Response>>, new()
+        where GetByIdCommand : IRequest<IQueryable<Response>>
+    {
+        protected readonly IMediator _mediator;
+        protected readonly IMapper _mapper;
+
+        public BaseGetController(IMediator mediator, IMapper mapper)
+        {
+            _mediator = mediator;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        [EnableQuery(PageSize = 25, MaxExpansionDepth = 3)]
+        public async Task<IQueryable<Response>> GetAll()
+        {
+            var response = await _mediator.Send(new GetAllCommand(), new CancellationToken());
+            return response;
+        }
+
+        [HttpGet("{id}")]
+        [EnableQuery(MaxExpansionDepth = 3)]
+        public async Task<IQueryable<Response>> GetById(Guid id)
+        {
+
+            return await _mediator.Send(_mapper.Map<GetByIdCommand>(id), new CancellationToken());
         }
     }
 }`

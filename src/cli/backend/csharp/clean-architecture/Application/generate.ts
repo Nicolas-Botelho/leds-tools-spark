@@ -10,7 +10,7 @@ import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
 import { generate as SecurityGenerator } from "./Security/generate.js"
 import { generate as UseCaseGenerator } from "./UseCase/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
     
     const Shared_folder = target_folder + "/Shared"
     const Services_Folder = target_folder + "/Services"
@@ -30,14 +30,16 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
     fs.mkdirSync(Security_Folder, {recursive: true})
     fs.mkdirSync(UseCases_Folder, {recursive: true})
 
+    const listClassRefCRUD = listClassCRUD.concat(listRefCRUD)
+
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
-    servicesGenerator(model, listClassCRUD, Services_Folder)
-    DTOGenerator(model, listClassCRUD, DTOs_Folder)
-    InterfacesGenerator(model, listClassCRUD, Interfaces_Folder)
-    MappersGenerator(model, listClassCRUD, Mappers_Folder)
-    ConfigurationGenerator(model, listClassCRUD, Configuration_Folder)
+    servicesGenerator(model, listClassCRUD, listRefCRUD, Services_Folder)
+    DTOGenerator(model, listClassRefCRUD, DTOs_Folder)
+    InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder)
+    MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder)
+    ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder)
     SecurityGenerator(model, Security_Folder)
-    UseCaseGenerator(model, listClassCRUD, UseCases_Folder)
+    UseCaseGenerator(model, listClassCRUD, listRefCRUD, UseCases_Folder)
 
 }

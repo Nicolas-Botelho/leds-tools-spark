@@ -2,19 +2,25 @@ import { expandToStringWithNL } from "langium/generate";
 import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
 
     const entities_folder = target_folder + '/Entities'
     fs.mkdirSync(entities_folder, {recursive: true})
 
-    fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
-    
+    fs.writeFileSync(path.join(target_folder,`BaseCRUDService.cs`), generateBaseCRUDService(model))
+
+    fs.writeFileSync(path.join(target_folder,`BaseGetService.cs`), generateBaseGetService(model))
+
     for(const cls of listClassCRUD) {
-        fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateService(model, cls))
+        fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateCRUDService(model, cls))
+    }
+
+    for(const cls of listRefCRUD) {
+        fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateGetService(model, cls))
     }
 }
 
-function generateService(model: Model, cls: LocalEntity) : string {
+function generateCRUDService(model: Model, cls: LocalEntity) : string {
     return expandToStringWithNL`
 using AutoMapper;
 using ${model.configuration?.name}.Application.DTOs.Entities.Request;
@@ -29,7 +35,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ${model.configuration?.name}.Application.Services.Entities
 {
     public class ${cls.name}Service :
-        BaseService<
+        BaseCRUDService<
             ${cls.name}RequestDTO,
             ${cls.name}ResponseDTO,
             ${cls.name},
@@ -42,7 +48,35 @@ namespace ${model.configuration?.name}.Application.Services.Entities
 }`
 }
 
-function generateBaseService(model: Model): string {
+function generateGetService(model: Model, cls: LocalEntity) : string {
+    return expandToStringWithNL`
+using AutoMapper;
+using ${model.configuration?.name}.Application.DTOs.Entities.Request;
+using ${model.configuration?.name}.Application.DTOs.Entities.Response;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using ${model.configuration?.name}.Application.Interfaces.Entities;
+using ${model.configuration?.name}.Domain.Entities;
+using ${model.configuration?.name}.Domain.Interfaces.Entities;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace ${model.configuration?.name}.Application.Services.Entities
+{
+    public class ${cls.name}Service :
+        BaseGetService<
+            ${cls.name}RequestDTO,
+            ${cls.name}ResponseDTO,
+            ${cls.name},
+            I${cls.name}Repository>, I${cls.name}Service
+    {
+
+        public ${cls.name}Service(IMediator mediator, IMapper mapper, I${cls.name}Repository repository) : base(mediator, mapper, repository) { }
+
+    }
+}`
+}
+
+function generateBaseCRUDService(model: Model): string {
     return expandToStringWithNL`
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -55,7 +89,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ${model.configuration?.name}.Application.Services
 {
-    public class BaseService<Request, Response, Entity, Repository> : IBaseService<Request, Response, Entity>
+    public class BaseCRUDService<Request, Response, Entity, Repository> : IBaseCRUDService<Request, Response, Entity>
        where Entity : BaseEntity
        where Response : BaseDTO
        where Repository : IBaseRepository<Entity>
@@ -64,7 +98,7 @@ namespace ${model.configuration?.name}.Application.Services
         protected readonly IMapper _mapper;
         protected readonly Repository _repository;
 
-        public BaseService(IMediator mediator, IMapper mapper, Repository repository)
+        public BaseCRUDService(IMediator mediator, IMapper mapper, Repository repository)
         {
             _mediator = mediator;
             _mapper = mapper;
@@ -114,6 +148,52 @@ namespace ${model.configuration?.name}.Application.Services
         {
             throw new NotImplementedException();
 
+        }
+    }
+}`
+}
+
+function generateBaseGetService(model: Model): string {
+    return expandToStringWithNL`
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using ${model.configuration?.name}.Application.Interfaces;
+using ${model.configuration?.name}.Domain.Common;
+using ${model.configuration?.name}.Domain.Interfaces.Common;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace ${model.configuration?.name}.Application.Services
+{
+    public class BaseGetService<Request, Response, Entity, Repository> : IBaseGetService<Request, Response, Entity>
+       where Entity : BaseEntity
+       where Response : BaseDTO
+       where Repository : IBaseRepository<Entity>
+    {
+        protected readonly IMediator _mediator;
+        protected readonly IMapper _mapper;
+        protected readonly Repository _repository;
+
+        public BaseGetService(IMediator mediator, IMapper mapper, Repository repository)
+        {
+            _mediator = mediator;
+            _mapper = mapper;
+            _repository = repository;
+        }
+
+        public virtual async Task<IQueryable<Response>> GetAll()
+        {
+            var result = _repository.GetAll();
+            var response = result.ProjectTo<Response>(_mapper.ConfigurationProvider);
+            return response;
+        }
+
+        public virtual async Task<IQueryable<Response>> GetById(Guid id)
+        {
+            var result = _repository.GetById(id);
+            var response = result.ProjectTo<Response>(_mapper.ConfigurationProvider);
+            return response;
         }
     }
 }`

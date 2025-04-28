@@ -9,7 +9,7 @@ import { generate as generateUpdate } from "./Case/UpdateCase/generate.js"
 import { generate as generateGetAll } from "./Case/GetAllCase/generate.js"
 import { generate as generateGetById } from "./Case/GetByIdCase/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
 
     const BaseCase_Folder = target_folder + "/BaseCase"
     fs.mkdirSync(BaseCase_Folder, {recursive: true})
@@ -17,13 +17,11 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
 
     const entities_folder = target_folder + "/Entities"
 
-    //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
-
-    const relation_maps = processRelations(listClassCRUD)
+    const CRUD_relation_maps = processRelations(listClassCRUD)
 
     for(const cls of listClassCRUD) {
 
-        const { relations } = getAttrsAndRelations(cls, relation_maps)
+        const { relations } = getAttrsAndRelations(cls, CRUD_relation_maps)
             
         const Class_Folder = entities_folder + `/${cls.name}Case`
         fs.mkdirSync(Class_Folder, {recursive: true})
@@ -43,6 +41,25 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
         generateCreate(model, Create_Folder, cls, relations)
         generateDelete(model, Delete_Folder, cls, relations)
         generateUpdate(model, Update_Folder, cls, relations)
+        generateGetAll(model, GetAll_Folder, cls, relations)
+        generateGetById(model, GetById_Folder, cls, relations)
+    }
+
+    const Ref_relation_maps = processRelations(listRefCRUD)
+
+    for(const cls of listRefCRUD) {
+
+        const { relations } = getAttrsAndRelations(cls, Ref_relation_maps)
+            
+        const Class_Folder = entities_folder + `/${cls.name}Case`
+        fs.mkdirSync(Class_Folder, {recursive: true})
+
+        const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
+        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
+
+        fs.mkdirSync(GetAll_Folder, {recursive: true})
+        fs.mkdirSync(GetById_Folder, {recursive: true})
+
         generateGetAll(model, GetAll_Folder, cls, relations)
         generateGetById(model, GetById_Folder, cls, relations)
     }
@@ -72,7 +89,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         where Response : BaseDTO
         where CreateRequest : IRequest<ApiResponse>
         where Request : IRequest<ApiResponse>
-        where IService : IBaseService<Request, Response, Entity>
+        where IService : IBaseCRUDService<Request, Response, Entity>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IService _service;
@@ -112,7 +129,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         where Response : BaseDTO
         where Request : IRequest<ApiResponse>
         where DeleteRequest : IRequest<ApiResponse>
-        where IService : IBaseService<Request, Response, Entity>
+        where IService : IBaseCRUDService<Request, Response, Entity>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IService _service;
@@ -152,7 +169,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         where Response : BaseDTO
         where UpdateRequest : IRequest<ApiResponse>
         where Request : IRequest<ApiResponse>
-        where IService : IBaseService<Request, Response, Entity>
+        where IService : IBaseCRUDService<Request, Response, Entity>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IService _service;
@@ -208,7 +225,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         where Response : BaseDTO
         where GetRequest : IRequest<IQueryable<Response>>
         where Request : IRequest<ApiResponse>
-        where IService : IBaseService<Request, Response, Entity>
+        where IService : IBaseGetService<Request, Response, Entity>
     {
         protected readonly IService _service;
 
@@ -241,7 +258,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         where Response : BaseDTO
         where GetRequest : IRequest<IQueryable<Response>>
         where Request : IRequest<ApiResponse>
-        where IService : IBaseService<Request, Response, Entity>
+        where IService : IBaseGetService<Request, Response, Entity>
     {
 
         protected readonly IService _service;
