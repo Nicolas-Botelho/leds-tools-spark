@@ -59,3 +59,4 @@ function extractDestination(filePath: string, destination?: string) : string {
     return destination ?? path.join(path.dirname(filePath))
 }
 
+

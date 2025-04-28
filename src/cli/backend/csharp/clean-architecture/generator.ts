@@ -33,19 +33,24 @@ export function generate(model: Model, usecase: UseCase, target_folder: string) 
     if ((listUCM.length != 0)) {
 
         const listClassCRUD: LocalEntity[] = [];
+        const listUCsNotCRUD: UseCase[] = [];
 
         for (const ucm of listUCM) {
             const listElem = ucm.elements.filter(isUseCase);
             for (const elem of listElem) {
-                if ((elem.uctype == 'crud') && (elem.entity ?? "" != "")) {
-                    listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                if (elem.uctype == 'crud') {
+                    if (elem.entity ?? "" != "") {
+                        listClassCRUD.push(elem.entity?.ref as LocalEntity);
+                    } 
+                }
+                else {
+                    listUCsNotCRUD.push(elem as UseCase);
                 }
             }
         }
 
-        if (listClassCRUD.length != 0){
-            generateWeb(model, listClassCRUD, webApi_folder);
-            generateApplication(model, listClassCRUD, application_folder);
-        }
+        generateWeb(model, listClassCRUD, listUCsNotCRUD, webApi_folder);
+        generateApplication(model, listClassCRUD, listUCsNotCRUD, application_folder);
+
     }
 }

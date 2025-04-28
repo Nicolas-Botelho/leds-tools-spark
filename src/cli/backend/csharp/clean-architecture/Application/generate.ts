@@ -1,4 +1,4 @@
-import { LocalEntity, Model } from "../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../language/generated/ast.js"
 import fs from "fs"
 import { generate as projectGenerator } from "./project-generator.js"
 import { generate as sharedGenerator } from "./Shared/generate.js"
@@ -10,7 +10,7 @@ import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
 import { generate as SecurityGenerator } from "./Security/generate.js"
 import { generate as UseCaseGenerator } from "./UseCase/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
     
     const Shared_folder = target_folder + "/Shared"
     const Services_Folder = target_folder + "/Services"
@@ -32,12 +32,12 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
 
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
-    servicesGenerator(model, listClassCRUD, Services_Folder)
-    DTOGenerator(model, listClassCRUD, DTOs_Folder)
-    InterfacesGenerator(model, listClassCRUD, Interfaces_Folder)
-    MappersGenerator(model, listClassCRUD, Mappers_Folder)
-    ConfigurationGenerator(model, listClassCRUD, Configuration_Folder)
+    servicesGenerator(model, listClassCRUD, listUCsNotCRUD, Services_Folder)
+    DTOGenerator(model, listClassCRUD, listUCsNotCRUD, DTOs_Folder)
+    InterfacesGenerator(model, listClassCRUD, listUCsNotCRUD, Interfaces_Folder)
+    MappersGenerator(model, listClassCRUD, listUCsNotCRUD, Mappers_Folder)
+    ConfigurationGenerator(model, listClassCRUD, listUCsNotCRUD, Configuration_Folder)
     SecurityGenerator(model, Security_Folder)
-    UseCaseGenerator(model, listClassCRUD, UseCases_Folder)
+    UseCaseGenerator(model, listClassCRUD, listUCsNotCRUD, UseCases_Folder)
 
 }

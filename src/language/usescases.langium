@@ -14,7 +14,7 @@ UseCase:
         Name
         Description?
         ('uctype' ':' uctype=UCTYPE
-        'classe' ':' entity=[LocalEntity:QualifiedName])?
+        'class' ':' entity=[LocalEntity:QualifiedName] )?
         'performer' ':' actors+=[Actor:QualifiedName] (',' actors+=[Actor:QualifiedName])*
         (events+=Event)*
         

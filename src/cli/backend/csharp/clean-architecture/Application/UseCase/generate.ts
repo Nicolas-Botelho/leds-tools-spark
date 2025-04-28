@@ -1,5 +1,5 @@
 import { expandToString } from "langium/generate";
-import { Attribute, LocalEntity, Model, isLocalEntity } from "../../../../../../language/generated/ast.js"
+import { Attribute, LocalEntity, Model, UseCase, Event, isLocalEntity } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
 import { RelationInfo, processRelations } from "../../../../../util/relations.js";
@@ -8,8 +8,9 @@ import { generate as generateDelete } from "./Case/DeleteCase/generate.js"
 import { generate as generateUpdate } from "./Case/UpdateCase/generate.js"
 import { generate as generateGetAll } from "./Case/GetAllCase/generate.js"
 import { generate as generateGetById } from "./Case/GetByIdCase/generate.js"
+import { generate as generateGeneric } from "./Case/GenericCase/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
     const BaseCase_Folder = target_folder + "/BaseCase"
     fs.mkdirSync(BaseCase_Folder, {recursive: true})
@@ -19,11 +20,12 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
 
     //const all_entities = modules.map(module => module.elements.filter(isLocalEntity)).flat()
 
-    const relation_maps = processRelations(listClassCRUD)
+    const CRUDrelation_maps = processRelations(listClassCRUD)
 
+    //Gera as pastas para as classes CRUD
     for(const cls of listClassCRUD) {
 
-        const { relations } = getAttrsAndRelations(cls, relation_maps)
+        const { relations } = getAttrsAndRelations(cls, CRUDrelation_maps)
             
         const Class_Folder = entities_folder + `/${cls.name}Case`
         fs.mkdirSync(Class_Folder, {recursive: true})
@@ -45,6 +47,21 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], target_fold
         generateUpdate(model, Update_Folder, cls, relations)
         generateGetAll(model, GetAll_Folder, cls, relations)
         generateGetById(model, GetById_Folder, cls, relations)
+        
+    }
+
+    //Gera as pastas para os casos de uso não CRUD
+    for(const uc of listUCsNotCRUD) {
+
+        //Seria melhor UC_Folder, mas optei por manter o padrão de nomenclatura
+        const Class_Folder = entities_folder + `/${uc.name_fragment}Case`
+        fs.mkdirSync(Class_Folder, {recursive: true})
+
+        for (const event of uc.events) {
+            const Event_Folder = Class_Folder + `/${event.name_fragment}Case`
+            fs.mkdirSync(Event_Folder, {recursive: true})
+            generateGeneric(model, Event_Folder, event, uc)
+        }
     }
 }
 
@@ -54,6 +71,7 @@ function generateBaseCase (model: Model, target_folder: string): void {
     fs.writeFileSync(path.join(target_folder,`UpdateHandler.cs`), BaseUpdateHandler(model))
     fs.writeFileSync(path.join(target_folder,`GetAllHandler.cs`), BaseGetAllHandler(model))
     fs.writeFileSync(path.join(target_folder,`GetByIdHandler.cs`), BaseGetbyIdHandler(model))
+    fs.writeFileSync(path.join(target_folder,`GenericHandler.cs`), BaseGenericHandler(model))
 }
 
 function BaseCreateHandler (model: Model): string {
@@ -258,6 +276,23 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
             var entity = _mapper.Map<Entity>(request);
             return await _service.GetById(entity.Id);
         }
+    }
+}`
+}
+
+function BaseGenericHandler (model: Model): string {
+    return expandToString`
+using AutoMapper;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using ${model.configuration?.name}.Application.Interfaces;
+using ${model.configuration?.name}.Domain.Common;
+using ${model.configuration?.name}.Domain.Interfaces.Common;
+using MediatR;
+
+namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+{
+    public class GenericHandler<IService, GenericRequest, Request, Response, Entity> : IRequestHandler<GenericRequest, ApiResponse> {  
+    
     }
 }`
 }
