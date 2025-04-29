@@ -30,7 +30,19 @@ usmodel Cad {
     usecase CRUD {
         name : "cadastro de propriedade"
         uctype : crud
-        classe : Moranguinho.Propriedade
+        class : Moranguinho.Propriedade
         performer : Cad.Adm
+    }
+
+    usecase gerenciarMilho {
+        name : "gerenciarMilho"
+        uctype : notcrud
+        class : Moranguinho.Propriedade
+        performer : Cad.Adm
+        event bizoiar_milho {
+            name : "bizoiarMilho"
+            description : "dar uma bizoiada marota no milho"
+            action : "dar uma bizoiada marota no milho"
+        }
     }
 }
