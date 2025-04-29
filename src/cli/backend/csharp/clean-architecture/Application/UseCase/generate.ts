@@ -1,5 +1,5 @@
 import { expandToString } from "langium/generate";
-import { Attribute, LocalEntity, Model, UseCase, Event, isLocalEntity } from "../../../../../../language/generated/ast.js"
+import { Attribute, LocalEntity, Model, UseCase, isLocalEntity } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
 import { RelationInfo, processRelations } from "../../../../../util/relations.js";

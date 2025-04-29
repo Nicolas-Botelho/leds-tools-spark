@@ -10,7 +10,7 @@ LANGUAGETYPE returns string:
 ;
 
 UCTYPE returns string:
-    ('crud')
+    ('crud' | 'notcrud')
 ;
 
 QualifiedName returns string:

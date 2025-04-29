@@ -1,9 +1,9 @@
-import { Generated, expandToString } from "langium/generate";
-import { Attribute, EnumEntityAtribute, LocalEntity, Model, Event, UseCase } from "../../../../../../../../language/generated/ast.js"
+import { /*Generated,*/ expandToString } from "langium/generate";
+import { /*Attribute, EnumEntityAtribute, LocalEntity,*/ Model, Event, UseCase } from "../../../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-import { capitalizeString } from "../../../../../../../util/generator-utils.js";
-import { RelationInfo } from "../../../../../../../util/relations.js";
+//import { capitalizeString } from "../../../../../../../util/generator-utils.js";
+//import { RelationInfo } from "../../../../../../../util/rel//ations.js";
 
 export function generate(model: Model, target_folder: string, event: Event, uc: UseCase) : void {
     fs.writeFileSync(path.join(target_folder,`${event.name_fragment}Handler.cs`), generateHandler(model, event, uc))

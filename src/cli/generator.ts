@@ -66,7 +66,7 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
         }
     } else if (opts.only_front) {
         // Frontend generation
-        vueVitegenerate(model, listClassCRUD, listUCsNotCRUD, final_destination);
+        vueVitegenerate(model, listClassCRUD, final_destination);
     } else if (opts.only_Documentation) {
         // Documentation generation
         docGenerate(model, final_destination);
@@ -87,7 +87,7 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
         }
 
         docGenerate(model, final_destination);
-        vueVitegenerate(model, listClassCRUD, listUCsNotCRUD, final_destination); //listRefCRUD
+        vueVitegenerate(model, listClassCRUD, final_destination); //listRefCRUD
         opaGenerate(model, final_destination);
     }
 

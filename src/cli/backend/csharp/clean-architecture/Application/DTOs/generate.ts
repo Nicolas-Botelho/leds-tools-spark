@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, Generated, expandToString, expandToStringWithNL } from "langium/generate"
-import { Attribute, EnumEntityAtribute, LocalEntity, Model, isLocalEntity, UseCase} from "../../../../../../language/generated/ast.js"
+import { Attribute, EnumEntityAtribute, LocalEntity, Model, isLocalEntity} from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 import { capitalizeString } from "../../../../../util/generator-utils.js"
