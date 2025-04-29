@@ -1,5 +1,5 @@
 import { expandToString } from "langium/generate"
-import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 

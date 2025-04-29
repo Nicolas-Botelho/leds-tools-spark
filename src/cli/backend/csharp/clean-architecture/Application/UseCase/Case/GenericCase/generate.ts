@@ -25,6 +25,9 @@ namespace ${model.configuration?.name}.Application.UseCase.Entities.${uc.name_fr
 {
     public class ${event.name_fragment}Handler : GenericHandler<I${event.name_fragment}Service, ${event.name_fragment}Command, ${event.name_fragment}RequestDTO, ${event.name_fragment}ResponseDTO, ${event.name_fragment}>
     {
+        /* Description:
+        ${event.description}
+        */
         public ${event.name_fragment}Handler(IUnitOfWork unitOfWork, I${event.name_fragment}Service service, IMapper mapper) : base(unitOfWork, service, mapper) { }
     }
 }`
