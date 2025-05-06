@@ -1,18 +1,22 @@
 import { expandToStringWithNL } from "langium/generate";
-import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
     const entities_folder = target_folder + '/Entities'
     fs.mkdirSync(entities_folder, {recursive: true})
 
     fs.writeFileSync(path.join(target_folder,`BaseCRUDService.cs`), generateBaseCRUDService(model))
-
     fs.writeFileSync(path.join(target_folder,`BaseGetService.cs`), generateBaseGetService(model))
+    fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
 
     for(const cls of listClassCRUD) {
         fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateCRUDService(model, cls))
+    }
+
+    for(const uc if listUCsNotCRUD) {
+        fs.writeFileSync(path.join(entities_folder,`${uc.name}Service.cs`), generateService(model, uc))
     }
 
     for(const cls of listRefCRUD) {
@@ -66,6 +70,34 @@ namespace ${model.configuration?.name}.Application.Services.Entities
         BaseGetService<
             ${cls.name}RequestDTO,
             ${cls.name}ResponseDTO,
+            ${cls.name},
+            I${cls.name}Repository>, I${cls.name}Service
+    {
+
+        public ${cls.name}Service(IMediator mediator, IMapper mapper, I${cls.name}Repository repository) : base(mediator, mapper, repository) { }
+
+    }
+}`
+}
+
+function generateService(model: Model, uc: UseCase) : string {
+    return expandToStringWithNL`
+using AutoMapper;
+using ${model.configuration?.name}.Application.DTOs.Entities.Request;
+using ${model.configuration?.name}.Application.DTOs.Entities.Response;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using ${model.configuration?.name}.Application.Interfaces.Entities;
+using ${model.configuration?.name}.Domain.Entities;
+using ${model.configuration?.name}.Domain.Interfaces.Entities;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace ${model.configuration?.name}.Application.Services.Entities
+{
+    public class ${cls.name}Service :
+        BaseGetService<
+            ${uc.name_fragment}RequestDTO,
+            ${uc.name_fragment}ResponseDTO,
             ${cls.name},
             I${cls.name}Repository>, I${cls.name}Service
     {
@@ -198,3 +230,4 @@ namespace ${model.configuration?.name}.Application.Services
     }
 }`
 }
+
