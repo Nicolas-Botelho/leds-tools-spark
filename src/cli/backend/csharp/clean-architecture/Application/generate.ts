@@ -34,7 +34,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
-    servicesGenerator(model, listClassCRUD, listRefCRUD, Services_Folder) //
+    servicesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Services_Folder) //
     DTOGenerator(model, listClassRefCRUD, DTOs_Folder) //
     InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder) //
     MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder) //

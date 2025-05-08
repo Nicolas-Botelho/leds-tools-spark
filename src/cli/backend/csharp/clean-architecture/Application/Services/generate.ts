@@ -1,5 +1,5 @@
 import { expandToStringWithNL } from "langium/generate";
-import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase, Event } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
@@ -15,8 +15,12 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
         fs.writeFileSync(path.join(entities_folder,`${cls.name}Service.cs`), generateCRUDService(model, cls))
     }
 
-    for(const uc if listUCsNotCRUD) {
-        fs.writeFileSync(path.join(entities_folder,`${uc.name}Service.cs`), generateService(model, uc))
+    for(const uc of listUCsNotCRUD) {
+        let uc_folder = `${target_folder}/${uc.name_fragment}` 
+        fs.mkdirSync(uc_folder, {recursive: true})
+        for (const event of uc.events){
+            fs.writeFileSync(path.join(uc_folder,`${event.name_fragment}Service.cs`), generateGenericService(model, event))
+        }
     }
 
     for(const cls of listRefCRUD) {
@@ -80,7 +84,7 @@ namespace ${model.configuration?.name}.Application.Services.Entities
 }`
 }
 
-function generateService(model: Model, uc: UseCase) : string {
+function generateGenericService(model: Model, event: Event) : string {
     return expandToStringWithNL`
 using AutoMapper;
 using ${model.configuration?.name}.Application.DTOs.Entities.Request;
@@ -94,15 +98,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ${model.configuration?.name}.Application.Services.Entities
 {
-    public class ${cls.name}Service :
-        BaseGetService<
-            ${uc.name_fragment}RequestDTO,
-            ${uc.name_fragment}ResponseDTO,
-            ${cls.name},
-            I${cls.name}Repository>, I${cls.name}Service
+    public class ${event.name_fragment}Service :
+        BaseService<
+            BaseRequestDTO,
+            BaseResponseDTO,         
+            IBaseRepository>
     {
 
-        public ${cls.name}Service(IMediator mediator, IMapper mapper, I${cls.name}Repository repository) : base(mediator, mapper, repository) { }
+        public ${event.name_fragment}Service(IMediator mediator, IMapper mapper, IBaseRepository repository) : base(mediator, mapper, repository) { }
 
     }
 }`
@@ -226,6 +229,38 @@ namespace ${model.configuration?.name}.Application.Services
             var result = _repository.GetById(id);
             var response = result.ProjectTo<Response>(_mapper.ConfigurationProvider);
             return response;
+        }
+    }
+}`
+}
+
+function generateBaseService(model: Model): string {
+    return expandToStringWithNL`
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ${model.configuration?.name}.Application.DTOs.Common;
+using ${model.configuration?.name}.Application.Interfaces;
+using ${model.configuration?.name}.Domain.Common;
+using ${model.configuration?.name}.Domain.Interfaces.Common;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace ${model.configuration?.name}.Application.Services
+{
+    public class BaseService<Request, Response, Repository>
+       where Entity : BaseEntity
+       where Response : BaseDTO
+       where Repository : IBaseRepository<Entity>
+    {
+        protected readonly IMediator _mediator;
+        protected readonly IMapper _mapper;
+        protected readonly Repository _repository;
+
+        public BaseGetService(IMediator mediator, IMapper mapper, Repository repository)
+        {
+            _mediator = mediator;
+            _mapper = mapper;
+            _repository = repository;
         }
     }
 }`
