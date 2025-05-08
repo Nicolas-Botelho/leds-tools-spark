@@ -248,7 +248,6 @@ using Microsoft.EntityFrameworkCore;
 namespace ${model.configuration?.name}.Application.Services
 {
     public class BaseService<Request, Response, Repository>
-       where Entity : BaseEntity
        where Response : BaseDTO
        where Repository : IBaseRepository<Entity>
     {
