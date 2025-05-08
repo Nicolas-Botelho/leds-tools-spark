@@ -256,7 +256,7 @@ namespace ${model.configuration?.name}.Application.Services
         protected readonly IMapper _mapper;
         protected readonly Repository _repository;
 
-        public BaseGetService(IMediator mediator, IMapper mapper, Repository repository)
+        public BaseService(IMediator mediator, IMapper mapper, Repository repository)
         {
             _mediator = mediator;
             _mapper = mapper;
