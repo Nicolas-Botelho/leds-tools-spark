@@ -1,3 +1,6 @@
+// Gerar adicionalmente pasta Authentication com arquivo UserMapper
+// e pasta Seguranca com arquivo UserMapper também
+
 import { expandToString, Generated } from "langium/generate"
 import { Attribute, LocalEntity, Model, isLocalEntity } from "../../../../../../language/generated/ast.js"
 import fs from "fs"

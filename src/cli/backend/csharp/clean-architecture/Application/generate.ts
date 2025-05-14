@@ -20,6 +20,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     const Configuration_Folder = target_folder + "/Configuration"
     const Security_Folder = target_folder + "/Security"
     const UseCases_Folder = target_folder + "/UseCase"
+    // const Features_Folder = target_folder + "/Features"
 
     fs.mkdirSync(Shared_folder, {recursive: true})
     fs.mkdirSync(Services_Folder, {recursive: true})

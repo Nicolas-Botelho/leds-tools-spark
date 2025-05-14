@@ -1,3 +1,5 @@
+// Gerar apenas DTOs de uso comum
+
 import { CompositeGeneratorNode, Generated, expandToString, expandToStringWithNL } from "langium/generate"
 import { Attribute, EnumEntityAtribute, LocalEntity, Model, isLocalEntity} from "../../../../../../language/generated/ast.js"
 import fs from "fs"

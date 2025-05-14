@@ -1,3 +1,5 @@
+// Essa pasta vai de arrasta pra cima
+
 import { expandToStringWithNL } from "langium/generate";
 import { LocalEntity, Model, UseCase, Event } from "../../../../../../language/generated/ast.js"
 import fs from "fs"

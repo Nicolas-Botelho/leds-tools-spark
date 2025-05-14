@@ -1,3 +1,5 @@
+// Gerar apenas Interfaces de uso comum
+
 import { expandToString } from "langium/generate"
 import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
