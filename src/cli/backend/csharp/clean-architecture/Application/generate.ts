@@ -9,6 +9,7 @@ import { generate as MappersGenerator } from "./Mappers/generate.js"
 import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
 import { generate as SecurityGenerator } from "./Security/generate.js"
 import { generate as UseCaseGenerator } from "./UseCase/generate.js"
+import { generate as FeaturesGenerator } from "./Features/generate.js"
 
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
     
@@ -20,16 +21,15 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     const Configuration_Folder = target_folder + "/Configuration"
     const Security_Folder = target_folder + "/Security"
     const UseCases_Folder = target_folder + "/UseCase"
-    // const Features_Folder = target_folder + "/Features"
+    const Features_Folder = target_folder + "/Features"
 
     fs.mkdirSync(Shared_folder, {recursive: true})
-    fs.mkdirSync(Services_Folder, {recursive: true})
     fs.mkdirSync(DTOs_Folder, {recursive: true})
     fs.mkdirSync(Interfaces_Folder, {recursive: true})
     fs.mkdirSync(Mappers_Folder, {recursive: true})
     fs.mkdirSync(Configuration_Folder, {recursive: true})
-    fs.mkdirSync(Security_Folder, {recursive: true})
     fs.mkdirSync(UseCases_Folder, {recursive: true})
+    fs.mkdirSync(Features_Folder, {recursive: true})
 
     const listClassRefCRUD = listClassCRUD.concat(listRefCRUD)
 
@@ -42,5 +42,6 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder) //
     SecurityGenerator(model, Security_Folder)
     UseCaseGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, UseCases_Folder)
+    FeaturesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Features_Folder)
 
 }
