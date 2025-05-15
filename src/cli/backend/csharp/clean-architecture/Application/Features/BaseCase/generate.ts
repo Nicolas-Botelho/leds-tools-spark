@@ -1,112 +1,36 @@
 import { expandToString } from "langium/generate";
-import { Attribute, LocalEntity, Model, UseCase, isLocalEntity } from "../../../../../../language/generated/ast.js"
+import { Attribute, LocalEntity, Model, UseCase, isLocalEntity } from "../../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-import { RelationInfo, processRelations } from "../../../../../util/relations.js";
-import { generate as generateCreate } from "./Case/CreateCase/generate.js"
-import { generate as generateDelete } from "./Case/DeleteCase/generate.js"
-import { generate as generateUpdate } from "./Case/UpdateCase/generate.js"
-import { generate as generateGetAll } from "./Case/GetAllCase/generate.js"
-import { generate as generateGetById } from "./Case/GetByIdCase/generate.js"
-import { generate as generateGeneric } from "./Case/GenericCase/generate.js"
+import { RelationInfo } from "../../../../../../util/relations.js";
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
-
-    const BaseCase_Folder = target_folder + "/BaseCase"
-    fs.mkdirSync(BaseCase_Folder, {recursive: true})
-    generateBaseCase(model, BaseCase_Folder)
-
-    const entities_folder = target_folder + "/Entities"
-
-    const CRUD_relation_maps = processRelations(listClassCRUD)
-
-    //Gera as pastas para as classes CRUD
-    for(const cls of listClassCRUD) {
-
-        const { relations } = getAttrsAndRelations(cls, CRUD_relation_maps)
-            
-        const Class_Folder = entities_folder + `/${cls.name}Case`
-        fs.mkdirSync(Class_Folder, {recursive: true})
-
-        const Create_Folder = Class_Folder + `/Create${cls.name}`
-        const Delete_Folder = Class_Folder + `/Delete${cls.name}`
-        const Update_Folder = Class_Folder + `/Update${cls.name}`
-        const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
-        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
-
-        fs.mkdirSync(Create_Folder, {recursive: true})
-        fs.mkdirSync(Delete_Folder, {recursive: true})
-        fs.mkdirSync(Update_Folder, {recursive: true})
-        fs.mkdirSync(GetAll_Folder, {recursive: true})
-        fs.mkdirSync(GetById_Folder, {recursive: true})
-
-        generateCreate(model, Create_Folder, cls, relations)
-        generateDelete(model, Delete_Folder, cls, relations)
-        generateUpdate(model, Update_Folder, cls, relations)
-        generateGetAll(model, GetAll_Folder, cls, relations)
-        generateGetById(model, GetById_Folder, cls, relations)
-        
-    }
-
-    //Gera as pastas para os casos de uso não CRUD
-    for(const uc of listUCsNotCRUD) {
-
-        //Seria melhor UC_Folder, mas optei por manter o padrão de nomenclatura
-        const Class_Folder = entities_folder + `/${uc.name_fragment}Case`
-        fs.mkdirSync(Class_Folder, {recursive: true})
-
-        for (const event of uc.events) {
-            const Event_Folder = Class_Folder + `/${event.name_fragment}Case`
-            fs.mkdirSync(Event_Folder, {recursive: true})
-            generateGeneric(model, Event_Folder, event, uc)
-        }
-    }
-
-    const Ref_relation_maps = processRelations(listRefCRUD)
-
-    for(const cls of listRefCRUD) {
-
-        const { relations } = getAttrsAndRelations(cls, Ref_relation_maps)
-            
-        const Class_Folder = entities_folder + `/${cls.name}Case`
-        fs.mkdirSync(Class_Folder, {recursive: true})
-
-        const GetAll_Folder = Class_Folder + `/GetAll${cls.name}`
-        const GetById_Folder = Class_Folder + `/GetById${cls.name}`
-
-        fs.mkdirSync(GetAll_Folder, {recursive: true})
-        fs.mkdirSync(GetById_Folder, {recursive: true})
-
-        generateGetAll(model, GetAll_Folder, cls, relations)
-        generateGetById(model, GetById_Folder, cls, relations)
-    }
-}
-
-function generateBaseCase (model: Model, target_folder: string): void {
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
+    
     fs.writeFileSync(path.join(target_folder,`CreateHandler.cs`), BaseCreateHandler(model))
     fs.writeFileSync(path.join(target_folder,`DeleteHandler.cs`), BaseDeleteHandler(model))
     fs.writeFileSync(path.join(target_folder,`UpdateHandler.cs`), BaseUpdateHandler(model))
     fs.writeFileSync(path.join(target_folder,`GetAllHandler.cs`), BaseGetAllHandler(model))
     fs.writeFileSync(path.join(target_folder,`GetByIdHandler.cs`), BaseGetbyIdHandler(model))
-    fs.writeFileSync(path.join(target_folder,`GenericHandler.cs`), BaseGenericHandler(model))
+
 }
 
 function BaseCreateHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
-using ${model.configuration?.name}.Domain.Interfaces.Common;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Application.Interfaces.Services;
+using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.BaseEntities;
+using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
-    public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, ApiResponse>
+    public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, TResult<Response>>
         where Entity : BaseEntity
-        where Response : BaseDTO
-        where CreateRequest : IRequest<ApiResponse>
-        where Request : IRequest<ApiResponse>
+        where Response : BaseDto
+        where CreateRequest : IRequest<TResult<Response>>
+        where Request : IRequest<TResult<Response>>
         where IService : IBaseCRUDService<Request, Response, Entity>
     {
         protected readonly IUnitOfWork _unitOfWork;
@@ -120,7 +44,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse> Handle(CreateRequest createRequest, CancellationToken cancellationToken)
+        public async Task<TResult<Response>> Handle(CreateRequest createRequest, CancellationToken cancellationToken)
         {
             var request = _mapper.Map<Request>(createRequest);
             var response = await _service.Create(request, cancellationToken);
@@ -133,20 +57,21 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 
 function BaseDeleteHandler (model: Model): string {
     return expandToString`
-﻿using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
-using ${model.configuration?.name}.Domain.Interfaces.Common;
+using AutoMapper;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
-    public class DeleteHandler<IService, DeleteRequest, Request, Response, Entity> : IRequestHandler<DeleteRequest, ApiResponse>
+    public class DeleteHandler<IService, DeleteRequest, Request, Response, Entity> : IRequestHandler<DeleteRequest, TResult<Response>>
         where Entity : BaseEntity
         where Response : BaseDTO
-        where Request : IRequest<ApiResponse>
-        where DeleteRequest : IRequest<ApiResponse>
+        where Request : IRequest<TResult<Response>>
+        where DeleteRequest : IRequest<TResult<Response>>
         where IService : IBaseCRUDService<Request, Response, Entity>
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -160,7 +85,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse> Handle(DeleteRequest deleteRequest, CancellationToken cancellationToken)
+        public async Task<TResult<Response>> Handle(DeleteRequest deleteRequest, CancellationToken cancellationToken)
         {
             var request = _mapper.Map<Entity>(deleteRequest);
             var response = await _service.Delete(request.Id, cancellationToken);
@@ -173,21 +98,22 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 
 function BaseUpdateHandler (model: Model): string {
     return expandToString`
-﻿using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
-using ${model.configuration?.name}.Domain.Interfaces.Common;
+using AutoMapper;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Application.Interfaces.Services;
+using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.BaseEntities;
+using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
-    public class UpdateHandler<IService, UpdateRequest, Request, Response, Entity> : IRequestHandler<UpdateRequest, ApiResponse>
+    public class UpdateHandler<IService, UpdateRequest, Request, Response, Entity> : IRequestHandler<UpdateRequest, TResult<Response>>
         where Entity : BaseEntity
-        where Response : BaseDTO
-        where UpdateRequest : IRequest<ApiResponse>
-        where Request : IRequest<ApiResponse>
-        where IService : IBaseCRUDService<Request, Response, Entity>
+        where Response : BaseDto
+        where UpdateRequest : IRequest<TResult<Response>>
+        where Request : IRequest<TResult<Response>>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IService _service;
@@ -200,7 +126,7 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
             _mapper = mapper;
         }
 
-        public async Task<ApiResponse> Handle(UpdateRequest updateRequest, CancellationToken cancellationToken)
+        public async Task<TResult<Response>> Handle(UpdateRequest updateRequest, CancellationToken cancellationToken)
         {
             var request = _mapper.Map<Request>(updateRequest);
             var response = await _service.Update(request, cancellationToken);
@@ -231,19 +157,20 @@ function getAttrsAndRelations(cls: LocalEntity, relation_map: Map<LocalEntity, R
 
 function BaseGetAllHandler(model: Model){
     return expandToString`
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Application.Interfaces.Services;
+using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.BaseEntities;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
-    public class GetAllHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, IQueryable<Response>>
+    public class GetAllHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, ICollection<Response>>
         where Entity : BaseEntity
-        where Response : BaseDTO
-        where GetRequest : IRequest<IQueryable<Response>>
-        where Request : IRequest<ApiResponse>
-        where IService : IBaseGetService<Request, Response, Entity>
+        where Response : BaseDto
+        where GetRequest : IRequest<ICollection<Response>>
+        where Request : IRequest<TResult<Response>>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
         protected readonly IService _service;
 
@@ -253,9 +180,9 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
         }
 
 
-        public async Task<IQueryable<Response>> Handle(GetRequest getRequest, CancellationToken cancellationToken)
+        public async Task<ICollection<Response>> Handle(GetRequest getRequest, CancellationToken cancellationToken)
         {
-            return await _service.GetAll();
+            return await Task.Run(() => _service.GetAll(), cancellationToken);
         }
     }
 }`
@@ -264,19 +191,20 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 function BaseGetbyIdHandler(model: Model){
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Application.Interfaces.Services;
+using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.BaseEntities;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
-    public class GetByIdHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, IQueryable<Response>>
+    public class GetByIdHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, Response>
         where Entity : BaseEntity
-        where Response : BaseDTO
-        where GetRequest : IRequest<IQueryable<Response>>
-        where Request : IRequest<ApiResponse>
-        where IService : IBaseGetService<Request, Response, Entity>
+        where Response : BaseDto
+        where GetRequest : IRequest<Response>
+        where Request : IRequest<TResult<Response>>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
 
         protected readonly IService _service;
@@ -288,28 +216,11 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
             _mapper = mapper;
         }
 
-        public async Task<IQueryable<Response>> Handle(GetRequest request, CancellationToken cancellationToken)
+        public async Task<Response> Handle(GetRequest request, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<Entity>(request);
-            return await _service.GetById(entity.Id);
+            return await Task.Run(() => _service.GetById(entity.Id), cancellationToken);
         }
-    }
-}`
-}
-
-function BaseGenericHandler (model: Model): string {
-    return expandToString`
-using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.Interfaces;
-using ${model.configuration?.name}.Domain.Common;
-using ${model.configuration?.name}.Domain.Interfaces.Common;
-using MediatR;
-
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
-{
-    public class GenericHandler<IService, GenericRequest, Request, Response, Entity> : IRequestHandler<GenericRequest, ApiResponse> {  
-    
     }
 }`
 }
