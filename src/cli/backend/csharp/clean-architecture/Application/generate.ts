@@ -6,7 +6,6 @@ import { generate as DTOGenerator } from "./DTOs/generate.js"
 import { generate as InterfacesGenerator } from "./Interfaces/generate.js"
 import { generate as MappersGenerator } from "./Mappers/generate.js"
 import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
-import { generate as SecurityGenerator } from "./Security/generate.js"
 import { generate as FeaturesGenerator } from "./Features/generate.js"
 
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
@@ -16,7 +15,6 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     const Interfaces_Folder = target_folder + "/Interfaces"
     const Mappers_Folder = target_folder + "/Mappers"
     const Configuration_Folder = target_folder + "/Configuration"
-    const Security_Folder = target_folder + "/Security"
     const UseCases_Folder = target_folder + "/UseCase"
     const Features_Folder = target_folder + "/Features"
 
@@ -36,7 +34,6 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder) //
     MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder) //
     ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder) //
-    SecurityGenerator(model, Security_Folder)
     FeaturesGenerator(model, listClassRefCRUD, listUCsNotCRUD, Features_Folder)
 
 }
