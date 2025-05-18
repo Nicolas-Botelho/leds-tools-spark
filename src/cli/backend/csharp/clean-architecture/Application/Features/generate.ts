@@ -1,8 +1,5 @@
-import { expandToString } from "langium/generate"
-import { Attribute, LocalEntity, Model, UseCase, isLocalEntity} from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase} from "../../../../../../language/generated/ast.js"
 import fs from "fs"
-import path from "path"
-import { RelationInfo} from "../../../../../util/relations.js"
 
 import { generate as generateBaseCase } from "./BaseCase/generate.js"
 import { generate as generateGenericService } from "./Services/generate.js"
@@ -24,7 +21,7 @@ export function generate(model: Model, listClassRefCRUD: LocalEntity[], listUCsN
         fs.mkdirSync(UC_Folder, {recursive: true})
 
         for (const event of uc.events) {
-            const Event_Folder = UC_Folder + `/${event.name_fragment}Case`
+            const Event_Folder = UC_Folder + `/${event.name_fragment}`
             fs.mkdirSync(Event_Folder, {recursive: true})
 
             fs.mkdirSync(Event_Folder + "/Services", {recursive: true})
@@ -32,10 +29,10 @@ export function generate(model: Model, listClassRefCRUD: LocalEntity[], listUCsN
             fs.mkdirSync(Event_Folder + "/Interfaces", {recursive: true})
             fs.mkdirSync(Event_Folder + "/UseCases", {recursive: true})
 
-            generateGenericService(model, Event_Folder + "/Services", event, uc)
-            generateGenericDTO(model, Event_Folder + "/DTOs", event, uc)
-            generateGenericInterface(model, Event_Folder + "/Interfaces", event, uc)
-            generateGenericUseCase(model, Event_Folder + "/UseCases", event, uc)
+            generateGenericService(model, event, uc, Event_Folder + "/Services",)
+            generateGenericDTO(model, event, uc, Event_Folder + "/DTOs",)
+            generateGenericInterface(model, event, uc, Event_Folder + "/Interfaces")
+            generateGenericUseCase(model, event, uc, Event_Folder + "/UseCases")
         }
     }
 

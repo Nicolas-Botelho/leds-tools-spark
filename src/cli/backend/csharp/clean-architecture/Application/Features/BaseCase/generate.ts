@@ -1,10 +1,9 @@
 import { expandToString } from "langium/generate";
-import { Attribute, LocalEntity, Model, UseCase, isLocalEntity } from "../../../../../../../language/generated/ast.js"
+import { Model } from "../../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
-import { RelationInfo } from "../../../../../../util/relations.js";
 
-export function generate(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
+export function generate(model: Model, target_folder: string) : void {
     
     fs.writeFileSync(path.join(target_folder,`CreateHandler.cs`), BaseCreateHandler(model))
     fs.writeFileSync(path.join(target_folder,`DeleteHandler.cs`), BaseDeleteHandler(model))
@@ -58,11 +57,11 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 function BaseDeleteHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using ConectaFapes.Common.Application.DTO;
-using ConectaFapes.Common.Application.Interfaces.Services;
-using ConectaFapes.Common.Domain;
-using ConectaFapes.Common.Domain.BaseEntities;
-using ConectaFapes.Common.Infrastructure.Interfaces;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Application.Interfaces.Services;
+using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.BaseEntities;
+using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
@@ -136,24 +135,6 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
     }
 }`
 }
-
-function getAttrsAndRelations(cls: LocalEntity, relation_map: Map<LocalEntity, RelationInfo[]>) : {attributes: Attribute[], relations: RelationInfo[]} {
-    // Se tem superclasse, puxa os atributos e relações da superclasse
-    if(cls.superType?.ref != null && isLocalEntity(cls.superType?.ref)) {
-      const parent =  cls.superType?.ref
-      const {attributes, relations} = getAttrsAndRelations(parent, relation_map)
-  
-      return {
-        attributes: attributes.concat(cls.attributes),
-        relations: relations.concat(relation_map.get(cls) ?? [])
-      }
-    } else {
-      return {
-        attributes: cls.attributes,
-        relations: relation_map.get(cls) ?? []
-      }
-    }
-  }
 
 function BaseGetAllHandler(model: Model){
     return expandToString`

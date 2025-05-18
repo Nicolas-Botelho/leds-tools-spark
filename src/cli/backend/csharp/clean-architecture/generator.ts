@@ -16,7 +16,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 
     fs.mkdirSync(application_folder, {recursive: true})
     fs.mkdirSync(domain_folder, {recursive: true})
-    fs.mkdirSync(webApi_folder, {recursive: true})
+    //fs.mkdirSync(webApi_folder, {recursive: true})
     fs.mkdirSync(infrastructure_folder, {recursive: true})
     // fs.mkdirSync(infra_test_folder, {recursive: true})
 

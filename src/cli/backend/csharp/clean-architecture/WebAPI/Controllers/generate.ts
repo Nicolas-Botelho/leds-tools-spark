@@ -1,7 +1,6 @@
 import path from "path"
 import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
-import { generate as generateBaseControllers } from "./BaseControllers/generate.js"
 import { generateCRUD as generateCRUDEntities, generateGet as generateGetEntities } from "./Entities/generate.js"
 
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
@@ -12,7 +11,6 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     fs.mkdirSync(entities_folder, {recursive: true})
     fs.mkdirSync(basecontrollers_folder, {recursive: true})
     
-    generateBaseControllers(model, basecontrollers_folder)
     generateLoop(model, listClassCRUD, listRefCRUD, entities_folder)
 }
 
