@@ -15,8 +15,19 @@ function generateAdd(model: Model, listClassRefCRUD: LocalEntity[]) : string {
     for(const cls of listClassRefCRUD) {
         adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
     }
-    //}
+
     return adds
+}
+
+function generateAddImports(model: Model, listClassRefCRUD: LocalEntity[]): string {
+    let addImport = ""
+
+    for (const cls of listClassRefCRUD) {
+        addImport += `using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.Interface;\n`
+        addImport += `using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.Service;\n`
+    }
+
+    return addImport
 }
 
 function generateServiceExtensions(model: Model, listClassRefCRUD: LocalEntity[]) : string {
@@ -24,8 +35,7 @@ function generateServiceExtensions(model: Model, listClassRefCRUD: LocalEntity[]
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using ${model.configuration?.name}.Application.Interfaces.Entities;
-using ${model.configuration?.name}.Application.Services.Entities;
+${generateAddImports(model, listClassRefCRUD)}
 using ${model.configuration?.name}.Application.Security.Interfaces;
 using ${model.configuration?.name}.Application.Security.Services;
 using ${model.configuration?.name}.Application.Shared.Behavior;
