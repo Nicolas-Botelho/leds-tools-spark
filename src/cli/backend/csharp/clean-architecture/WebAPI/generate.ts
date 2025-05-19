@@ -33,7 +33,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     configGenerator(model, config_folder)
     extensionsGenerator(model, listClassRefCRUD, extensions_folder)
     propertiesGenerator(model, properties_folder)
-    generateControllers(model, listClassCRUD, listRefCRUD, controllers_folder)
+    generateControllers(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, controllers_folder)
     generateScripts(model, listClassRefCRUD, scripts_folder)
 
 }

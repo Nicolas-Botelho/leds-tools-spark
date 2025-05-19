@@ -1,16 +1,18 @@
 import path from "path"
-import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import { generateCRUD as generateCRUDEntities, generateGet as generateGetEntities } from "./Entities/generate.js"
+import { generate as generateNotCRUD } from "./UseCases/generate.js"
 
-export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
-    const basecontrollers_folder = target_folder + "/BaseControllers"
+    const ucsnotcrud_folder = target_folder + "/UseCases"
     const entities_folder = target_folder + "/Entities"
 
+    fs.mkdirSync(ucsnotcrud_folder, {recursive: true})
     fs.mkdirSync(entities_folder, {recursive: true})
-    fs.mkdirSync(basecontrollers_folder, {recursive: true})
     
+    generateNotCRUDControllers(model, listUCsNotCRUD, ucsnotcrud_folder)
     generateLoop(model, listClassCRUD, listRefCRUD, entities_folder)
 }
 
@@ -22,5 +24,11 @@ function generateLoop(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: L
 
     for(const cls of listRefCRUD) {
         fs.writeFileSync(path.join(tgt_folder, `${cls.name}Controller.cs`), generateGetEntities(model, cls))
+    }
+}
+
+function generateNotCRUDControllers(model: Model, listUCsNotCRUD: UseCase[], tgt_folder: string) : void {
+    for(const uc of listUCsNotCRUD) {
+        fs.writeFileSync(path.join(tgt_folder, `${uc.name_fragment}Controller.cs`), generateNotCRUD(model, uc))
     }
 }
