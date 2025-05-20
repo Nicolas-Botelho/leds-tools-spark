@@ -1,4 +1,5 @@
 import path from "path"
+import { expandToStringWithNL } from "langium/generate"
 import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import { generateCRUD as generateCRUDEntities, generateGet as generateGetEntities } from "./Entities/generate.js"
@@ -8,9 +9,11 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 
     const ucsnotcrud_folder = target_folder + "/UseCases"
     const entities_folder = target_folder + "/Entities"
+    const basecontrollers_folder = target_folder + "/BaseControllers"
 
     fs.mkdirSync(ucsnotcrud_folder, {recursive: true})
     fs.mkdirSync(entities_folder, {recursive: true})
+    fs.mkdirSync(basecontrollers_folder, {recursive: true})
     
     generateNotCRUDControllers(model, listUCsNotCRUD, ucsnotcrud_folder)
     generateLoop(model, listClassCRUD, listRefCRUD, entities_folder)
@@ -31,4 +34,8 @@ function generateNotCRUDControllers(model: Model, listUCsNotCRUD: UseCase[], tgt
     for(const uc of listUCsNotCRUD) {
         fs.writeFileSync(path.join(tgt_folder, `${uc.name_fragment}Controller.cs`), generateNotCRUD(model, uc))
     }
+}
+
+function generateBaseControllers(model: Model) : string {
+    return expandToStringWithNL``;
 }
