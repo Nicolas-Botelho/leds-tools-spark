@@ -12,7 +12,7 @@ export function generate(model: Model, target_folder: string) : void {
 function generateHandler(model: Model): string {
     return expandToString`
 using MediatR;
-using ${model.configuration?.name}.Domain.Interfaces.Common;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 using ${model.configuration?.name}.Domain.Interfaces.Security;
 using ${model.configuration?.name}.Domain.Security.Account.Entities;
 
