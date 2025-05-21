@@ -1,9 +1,9 @@
 import path from "path"
-import { expandToStringWithNL } from "langium/generate"
 import { LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import { generateCRUD as generateCRUDEntities, generateGet as generateGetEntities } from "./Entities/generate.js"
 import { generate as generateNotCRUD } from "./UseCases/generate.js"
+import { generate as generateBaseController } from "./BaseControllers/generate.js"
 
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
@@ -15,6 +15,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     fs.mkdirSync(entities_folder, {recursive: true})
     fs.mkdirSync(basecontrollers_folder, {recursive: true})
     
+    generateBaseController(model, basecontrollers_folder)
     generateNotCRUDControllers(model, listUCsNotCRUD, ucsnotcrud_folder)
     generateLoop(model, listClassCRUD, listRefCRUD, entities_folder)
 }
@@ -36,6 +37,3 @@ function generateNotCRUDControllers(model: Model, listUCsNotCRUD: UseCase[], tgt
     }
 }
 
-function generateBaseControllers(model: Model) : string {
-    return expandToStringWithNL``;
-}
