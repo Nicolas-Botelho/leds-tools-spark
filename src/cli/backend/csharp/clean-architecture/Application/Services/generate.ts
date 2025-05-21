@@ -1,13 +1,16 @@
 // Essa pasta vai de arrasta pra cima
 
 import { expandToStringWithNL } from "langium/generate";
-import { LocalEntity, Model, UseCase, Event } from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase, /*Event*/ } from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path";
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
+    const BaseGet_Folder = target_folder + "/BaseGetService"
+
+    fs.mkdirSync(BaseGet_Folder, {recursive: true})
 
     fs.writeFileSync(path.join(target_folder,`BaseGetService.cs`), generateBaseGetService(model))
-    fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
+    // fs.writeFileSync(path.join(target_folder,`BaseService.cs`), generateBaseService(model))
 
     // for(const uc of listUCsNotCRUD) {
     //     let uc_folder = `${target_folder}/${uc.name_fragment}` 
@@ -55,9 +58,9 @@ using Microsoft.EntityFrameworkCore;
 using ConectaFapes.Common.Application.DTO;
 using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
-using ${model.configuration?.name}.Application.Interfaces;
+using ${model.configuration?.name}.Application.Interfaces.BaseGetInterface;
 
-namespace ${model.configuration?.name}.Application.Services
+namespace ${model.configuration?.name}.Application.Services.BaseGetService
 {
     public class BaseGetService<Request, Response, Entity, Repository> : IBaseGetService<Request, Response, Entity>
        where Entity : BaseEntity
@@ -89,34 +92,33 @@ namespace ${model.configuration?.name}.Application.Services
 }`
 }
 
-function generateBaseService(model: Model): string {
-    return expandToStringWithNL`
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using ConectaFapes.Common.Application.DTO;
-using ConectaFapes.Common.Domain.BaseEntities;
-using ConectaFapes.Common.Infrastructure.Interfaces;
-using ${model.configuration?.name}.Application.Interfaces;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+// function generateBaseService(model: Model): string {
+//     return expandToStringWithNL`
+// using AutoMapper;
+// using AutoMapper.QueryableExtensions;
+// using ConectaFapes.Common.Application.DTO;
+// using ConectaFapes.Common.Domain.BaseEntities;
+// using ConectaFapes.Common.Infrastructure.Interfaces;
+// using ${model.configuration?.name}.Application.Interfaces;
+// using MediatR;
+// using Microsoft.EntityFrameworkCore;
 
-namespace ${model.configuration?.name}.Application.Services
-{
-    public class BaseService<Request, Response, Repository>
-       where Response : BaseDto
-       where Repository : IBaseRepository<Entity>
-    {
-        protected readonly IMediator _mediator;
-        protected readonly IMapper _mapper;
-        protected readonly Repository _repository;
+// namespace ${model.configuration?.name}.Application.Services
+// {
+//     public class BaseService<Request, Response, Repository>
+//        where Response : BaseDto
+//        where Repository : IBaseRepository<Entity>
+//     {
+//         protected readonly IMediator _mediator;
+//         protected readonly IMapper _mapper;
+//         protected readonly Repository _repository;
 
-        public BaseService(IMediator mediator, IMapper mapper, Repository repository)
-        {
-            _mediator = mediator;
-            _mapper = mapper;
-            _repository = repository;
-        }
-    }
-}`
-}
-
+//         public BaseService(IMediator mediator, IMapper mapper, Repository repository)
+//         {
+//             _mediator = mediator;
+//             _mapper = mapper;
+//             _repository = repository;
+//         }
+//     }
+// }`
+// }

@@ -12,12 +12,12 @@ export function generate ( model: Model, cls: LocalEntity, target_folder: string
 function generateHandler(model: Model, cls: LocalEntity) : string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.DTOs;
-using ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.Interface;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.Interface;
 using ${model.configuration?.name}.Domain.Entities;
-using ${model.configuration?.name}.Application.Feature.BaseGetCase;
+using ${model.configuration?.name}.Application.Features.BaseGetCase;
 
-namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.${cls.name}Case.GetById
+namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById
 {
     internal class GetById${cls.name}Handler : GetByIdHandler<I${cls.name}Service, GetById${cls.name}Command, ${cls.name}RequestDTO, ${cls.name}ResponseDTO, ${cls.name}>
     {
@@ -33,9 +33,9 @@ function generateCommand(model: Model, cls: LocalEntity) : string {
     return expandToString`
 using ConectaFapes.Common.Domain;
 using MediatR;
-using ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.DTOs;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;
 
-namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.${cls.name}Case.GetById
+namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById
 {
     public record GetById${cls.name}Command(Guid Id) : IRequest<${cls.name}ResponseDTO>
     {
@@ -48,7 +48,7 @@ function generateValidator(model: Model, cls: LocalEntity) : string {
     return expandToString`
 using FluentValidation;
 
-namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.${cls.name}Case.GetById
+namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById
 {
     public class GetById${cls.name}Validator : AbstractValidator<GetById${cls.name}Command>
     {

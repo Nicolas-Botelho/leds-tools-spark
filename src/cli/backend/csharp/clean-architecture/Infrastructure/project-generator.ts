@@ -41,10 +41,10 @@ function generateProjectsln(model: Model) : string {
   </ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="ConectaFapes.Common">
-			<HintPath>.\..\conectafapes-packages\ConectaFapes.Common.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+	    <Reference Include="ConectaFapes.Common">
+		    <HintPath>.\\..\\conectafapes-packages\\ConectaFapes.Common.dll</HintPath>
+	    </Reference>
+  </ItemGroup>
 
 </Project>
 `

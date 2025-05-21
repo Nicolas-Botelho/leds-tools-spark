@@ -18,7 +18,7 @@ function generateBaseGetService (model : Model): string {
     return expandToString`
 using ConectaFapes.Common.Domain;
 
-namespace ${model.configuration?.name}.Application.Interfaces
+namespace ${model.configuration?.name}.Application.Interfaces.BaseGetInterface
 {
     public interface IBaseGetService<Request, Response, Entity>
     {

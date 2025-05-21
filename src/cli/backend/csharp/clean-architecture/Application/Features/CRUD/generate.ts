@@ -59,7 +59,7 @@ function generateRequestDTO (model: Model, relations: RelationInfo[], cls: Local
 using MediatR;
 using ConectaFapes.Common.Domain;
 
-namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.DTOs
+namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs
 {
     public class ${cls.name}RequestDTO : IRequest<TResult<${cls.name}ResponseDTO>>
     {
@@ -74,8 +74,9 @@ namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entit
 function generateResponseDTO (model: Model, relations: RelationInfo[], cls: LocalEntity) : string {
     return expandToStringWithNL`
 using ConectaFapes.Common.Application.DTO;
+${generateRelationsImportResponse(model, cls, relations)}
 
-namespace ${model.configuration?.name}.Application.Feature.CRUD.${cls.name}Entity.DTOs
+namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs
 {
     public class ${cls.name}ResponseDTO : BaseDto
     {
@@ -245,6 +246,17 @@ function createEnum(enumEntityAtribute: EnumEntityAtribute):string {
       node.appendNewLine()
     }
     return node
+  }
+
+  // using Morango.Application.Features.CRUD.AgricultorEntity.DTOs;
+  function generateRelationsImportResponse(model: Model, cls: LocalEntity, relations: RelationInfo[]): string {
+    let addImport = ""
+
+    for (const rel of relations) {
+      addImport += `using ${model.configuration?.name}.Application.Features.CRUD.${rel.tgt.name}Entity.DTOs;\n`
+    }
+
+    return addImport
   }
   
   function generateRelation(cls: LocalEntity, {tgt, card, owner}: RelationInfo) : Generated {

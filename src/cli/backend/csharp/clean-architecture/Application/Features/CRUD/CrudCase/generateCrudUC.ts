@@ -7,11 +7,11 @@ import { generate as generateGetAll } from "./generateGetAll.js"
 import { generate as generateGetById } from "./generateGatById.js" 
 
 export function generateCrudCase (model: Model, cls: LocalEntity, target_folder: string): void {
-    const Create_Folder = target_folder + `Create${cls.name}`
-    const Delete_Folder = target_folder + `Delete${cls.name}`
-    const Update_Folder = target_folder + `Update${cls.name}`
-    const GetAll_Folder = target_folder + `GetAll${cls.name}`
-    const GetById_Folder = target_folder + `GetById${cls.name}`
+    const Create_Folder = target_folder + `/Create${cls.name}`
+    const Delete_Folder = target_folder + `/Delete${cls.name}`
+    const Update_Folder = target_folder + `/Update${cls.name}`
+    const GetAll_Folder = target_folder + `/GetAll${cls.name}`
+    const GetById_Folder = target_folder + `/GetById${cls.name}`
     
     fs.mkdirSync(Create_Folder, {recursive: true})
     fs.mkdirSync(Delete_Folder, {recursive: true})
