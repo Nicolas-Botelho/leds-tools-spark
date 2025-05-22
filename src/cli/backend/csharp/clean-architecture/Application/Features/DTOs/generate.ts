@@ -11,7 +11,7 @@ export function generate(model: Model, event: Event, uc: UseCase, target_folder:
 
 function generateGenericDTO(model : Model, event : Event, uc : UseCase) : string {
     return expandToStringWithNL`
-﻿using ${model.configuration?.name}.Common.Application.DTO;
+﻿using ConectaFapes.Common.Application.DTO;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Base.${event.name_fragment}.DTOs
 {

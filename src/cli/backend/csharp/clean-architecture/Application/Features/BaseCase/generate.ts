@@ -16,11 +16,11 @@ export function generate(model: Model, target_folder: string) : void {
 function BaseCreateHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Application.Interfaces.Services;
-using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.BaseEntities;
-using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
@@ -57,11 +57,11 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 function BaseDeleteHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Application.Interfaces.Services;
-using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.BaseEntities;
-using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
@@ -98,11 +98,11 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 function BaseUpdateHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Application.Interfaces.Services;
-using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.BaseEntities;
-using ${model.configuration?.name}.Common.Infrastructure.Interfaces;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
@@ -138,10 +138,10 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 
 function BaseGetAllHandler(model: Model){
     return expandToString`
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Application.Interfaces.Services;
-using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase
@@ -172,10 +172,10 @@ namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 function BaseGetbyIdHandler(model: Model){
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Application.Interfaces.Services;
-using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.BaseEntities;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.UseCase.BaseCase

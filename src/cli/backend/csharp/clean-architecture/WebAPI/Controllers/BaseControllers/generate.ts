@@ -126,8 +126,8 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
 function generateCrudController(model: Model) : string {
   return expandToStringWithNL`
 ﻿using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Domain;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

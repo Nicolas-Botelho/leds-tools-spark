@@ -12,7 +12,7 @@ export function generate(model: Model, event: Event, uc: UseCase, target_folder:
 function generateGenericCommand (model: Model, event: Event, uc: UseCase): string {
     return expandToString`
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.DTOs;
-using ${model.configuration?.name}.Common.Domain;
+using ConectaFapes.Common.Domain;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.UseCases
@@ -25,7 +25,7 @@ function generateGenericHandler (model: Model, event: Event, uc: UseCase): strin
     return expandToString`
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.DTOs;
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Interfaces;
-using ${model.configuration?.name}.Common.Domain;
+using ConectaFapes.Common.Domain;
 using MediatR;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.UseCases

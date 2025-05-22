@@ -5,7 +5,7 @@ export function generate(model: Model, uc: UseCase): string {
     return expandToString`
 using AutoMapper;
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case;
-using ${model.configuration?.name}.Common.Presentation.BaseControllers;
+using ${model.configuration?.name}.WebAPI.Controllers.BaseControllers;
 using ${model.configuration?.name}.Domain.Interfaces.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

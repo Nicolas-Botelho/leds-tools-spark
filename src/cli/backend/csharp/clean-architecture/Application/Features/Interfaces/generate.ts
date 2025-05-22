@@ -13,7 +13,7 @@ function generateService (model: Model, event: Event, uc: UseCase): string {
     return expandToString`
 ﻿using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.DTOs;
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.UseCases;
-using ${model.configuration?.name}.Common.Domain;
+using ConectaFapes.Common.Domain;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Interfaces
 {
