@@ -77,7 +77,7 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
         // OPA generation
         opaGenerate(model, final_destination);
     } else {
-        // Generate All
+        // Generate all
         if (model.configuration?.language === 'python') {
             pythonGenerate(model, final_destination);
         } else if (model.configuration?.language?.startsWith("csharp")) {
