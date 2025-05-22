@@ -39,6 +39,12 @@ function generateProjectsln(model: Model) : string {
     <ProjectReference Include="..\\${model.configuration?.name}.Domain\\${model.configuration?.name}.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+	    <Reference Include="ConectaFapes.Common">
+		    <HintPath>.\\..\\conectafapes-packages\\ConectaFapes.Common.dll</HintPath>
+	    </Reference>
+  </ItemGroup>
+
 </Project>
 `
 }
