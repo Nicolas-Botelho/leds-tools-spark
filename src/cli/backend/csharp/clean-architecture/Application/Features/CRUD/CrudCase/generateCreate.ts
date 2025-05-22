@@ -1,4 +1,4 @@
-import { LocalEntity, Model, Relation } from "../../../../../../../../language/generated/ast.js";
+import { LocalEntity, Model } from "../../../../../../../../language/generated/ast.js";
 import fs from "fs"
 import { expandToString } from "langium/generate";
 import path from "path"
@@ -7,7 +7,7 @@ import { RelationInfo } from "../../../../../../../util/relations.js";
 export function generate ( model: Model, cls: LocalEntity, relations: RelationInfo[], target_folder: string) : void {
 
     fs.writeFileSync(path.join(target_folder, `Create${cls.name}Handler.cs`), generateHandler(model, cls))
-    fs.writeFileSync(path.join(target_folder, `Create${cls.name}Command.cs`), generateCommand(model, cls, cls.relations))
+    fs.writeFileSync(path.join(target_folder, `Create${cls.name}Command.cs`), generateCommand(model, cls, relations))
     fs.writeFileSync(path.join(target_folder, `Create${cls.name}Validator.cs`), generateValidator(model, cls))
 }
 
@@ -33,7 +33,7 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
 `
 }
 
-function generateCommand(model: Model, cls: LocalEntity, relations: Relation[]) : string {
+function generateCommand(model: Model, cls: LocalEntity, relations: RelationInfo[]) : string {
     return expandToString`
 using ConectaFapes.Common.Domain;
 using MediatR;
@@ -68,7 +68,7 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
 `
 }
 
-function generateAttributesAndRelations (model: Model, cls: LocalEntity, relations: Relation[]) : string {
+function generateAttributesAndRelations (model: Model, cls: LocalEntity, relations: RelationInfo[]) : string {
     let add = ""
     let cont = 0
 
@@ -77,8 +77,8 @@ function generateAttributesAndRelations (model: Model, cls: LocalEntity, relatio
     }
 
     for (const rel of relations) {
-        if (cont != relations.length - 1) add += `Guid ${rel.type.ref}Id,\n`;
-        else add += `Guid ${rel.type.ref}Id\n`;
+        if (cont != relations.length - 1) add += `Guid ${rel.tgt.name}Id,\n`;
+        else add += `Guid ${rel.tgt.name}Id\n`;
         cont++
     }
 
