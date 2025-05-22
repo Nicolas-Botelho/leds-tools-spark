@@ -1,18 +1,18 @@
-import { Model } from "../../../../../../../language/generated/ast.js";
-import fs from "fs"
-import { expandToString } from "langium/generate";
 import path from "path"
+import { expandToStringWithNL } from "langium/generate"
+import { Model } from "../../../../../../../language/generated/ast.js"
+import fs from "fs"
 
-export function generate(model : Model, target_folder : string) : void {
-    fs.writeFileSync(path.join(target_folder, "BaseController.cs"), generateBaseController(model))
-    fs.writeFileSync(path.join(target_folder, "BaseControllerResult.cs"), generateBaseControllerResult(model))
-    fs.writeFileSync(path.join(target_folder, "BaseCrudController.cs"), generateBaseCrudController(model))
-    fs.writeFileSync(path.join(target_folder, "BaseGetController.cs"), generateBaseGetController(model))
+export function generate(model: Model, target_folder: string) : void {
+  fs.writeFileSync(path.join(target_folder, `BaseController.cs`), generateBaseController(model))
+  fs.writeFileSync(path.join(target_folder, `ControllerResult.cs`), generateControllerResult(model))
+  fs.writeFileSync(path.join(target_folder, `CrudController.cs`), generateCrudController(model))
+  fs.writeFileSync(path.join(target_folder, `GetController.cs`), generateGetController(model))
 }
 
 function generateBaseController(model: Model) : string {
-    return expandToString`
-using AutoMapper;
+  return expandToStringWithNL`
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
@@ -37,11 +37,11 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
 `
 }
 
-function generateBaseControllerResult(model: Model) : string {
-    return expandToString`
-using ConectaFapes.Common.Domain;
-using ConectaFapes.Common.Domain.ResultEntities.Enum;
-using ConectaFapes.Common.Utils.Responses;
+function generateControllerResult(model: Model) : string {
+  return expandToStringWithNL`
+﻿using ${model.configuration?.name}.Common.Domain;
+using ${model.configuration?.name}.Common.Domain.ResultEntities.Enum;
+using ${model.configuration?.name}.Common.Utils.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -120,13 +120,12 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
             return badRequest;
         }
     }
-}
-`
+}`
 }
 
-function generateBaseCrudController(model: Model) : string {
-    return expandToString`
-using AutoMapper;
+function generateCrudController(model: Model) : string {
+  return expandToStringWithNL`
+﻿using AutoMapper;
 using ConectaFapes.Common.Application.DTO;
 using ConectaFapes.Common.Domain;
 using MediatR;
@@ -256,14 +255,14 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
         }
     }
 }
-`
+  `
 }
 
-function generateBaseGetController(model: Model) : string {
-    return expandToString`
+function generateGetController(model: Model) : string {
+    return expandToStringWithNL`
 using AutoMapper;
-using ConectaFapes.Common.Application.DTO;
-using ConectaFapes.Common.Domain;
+using ${model.configuration?.name}.Common.Application.DTO;
+using ${model.configuration?.name}.Common.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -307,5 +306,5 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
         }
     }
 }
-`
+    `
 }

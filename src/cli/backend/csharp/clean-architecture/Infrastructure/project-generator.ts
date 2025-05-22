@@ -40,7 +40,7 @@ function generateProjectsln(model: Model) : string {
     <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
 	    <Reference Include="ConectaFapes.Common">
 		    <HintPath>.\\..\\conectafapes-packages\\ConectaFapes.Common.dll</HintPath>
 	    </Reference>

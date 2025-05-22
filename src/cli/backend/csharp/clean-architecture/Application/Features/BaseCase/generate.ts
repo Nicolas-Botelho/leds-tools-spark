@@ -1,36 +1,36 @@
-import { Model } from "../../../../../../../language/generated/ast.js";
-import fs from "fs";
 import { expandToString } from "langium/generate";
+import { Model } from "../../../../../../../language/generated/ast.js"
+import fs from "fs"
 import path from "path";
 
-// Criar Handlers base de Create, Delete, GetAll, GetById e Update
-export function generate (model: Model, target_folder: string) : void {
-    fs.writeFileSync(path.join(target_folder,`CreateHandler.cs`), generateBaseCreateHandler(model))
-    fs.writeFileSync(path.join(target_folder,`DeleteHandler.cs`), generateBaseDeleteHandler(model))
-    fs.writeFileSync(path.join(target_folder,`UpdateHandler.cs`), generateBaseUpdateHandler(model))
-    fs.writeFileSync(path.join(target_folder,`GetAllHandler.cs`), generateBaseGetAllHandler(model))
-    fs.writeFileSync(path.join(target_folder,`GetByIdHandler.cs`), generateBaseGetbyIdHandler(model))
-    // fs.writeFileSync(path.join(target_folder,`GenericHandler.cs`), generateBaseGenericHandler(model))
+export function generate(model: Model, target_folder: string) : void {
+    
+    fs.writeFileSync(path.join(target_folder,`CreateHandler.cs`), BaseCreateHandler(model))
+    fs.writeFileSync(path.join(target_folder,`DeleteHandler.cs`), BaseDeleteHandler(model))
+    fs.writeFileSync(path.join(target_folder,`UpdateHandler.cs`), BaseUpdateHandler(model))
+    fs.writeFileSync(path.join(target_folder,`GetAllHandler.cs`), BaseGetAllHandler(model))
+    fs.writeFileSync(path.join(target_folder,`GetByIdHandler.cs`), BaseGetbyIdHandler(model))
+
 }
 
-function generateBaseCreateHandler(model: Model) : string {
+function BaseCreateHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
-using MediatR;
-using ConectaFapes.Common.Domain;
-using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Application.DTO;
 using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
+using MediatR;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.UseCase.BaseCase
 {
     public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, TResult<Response>>
         where Entity : BaseEntity
         where Response : BaseDto
         where CreateRequest : IRequest<TResult<Response>>
         where Request : IRequest<TResult<Response>>
-        where IService : IBaseCrudService<Request, Response, Entity>
+        where IService : IBaseCRUDService<Request, Response, Entity>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IService _service;
@@ -51,11 +51,10 @@ namespace ${model.configuration?.name}.Application.Features.BaseCase
             return response;
         }
     }
-}
-`
+}`
 }
 
-function generateBaseDeleteHandler(model: Model) : string {
+function BaseDeleteHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
 using ConectaFapes.Common.Application.DTO;
@@ -93,19 +92,18 @@ namespace ${model.configuration?.name}.Application.Features.BaseCase
             return response;
         }
     }
-}
-`
+}`
 }
 
-function generateBaseUpdateHandler(model: Model) : string {
+function BaseUpdateHandler (model: Model): string {
     return expandToString`
 using AutoMapper;
 using ConectaFapes.Common.Application.DTO;
-using ConectaFapes.Common.Domain.BaseEntities;
-using ConectaFapes.Common.Domain;
-using MediatR;
 using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
+using MediatR;
 
 namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
@@ -135,17 +133,16 @@ namespace ${model.configuration?.name}.Application.Features.BaseCase
             return response;
         }
     }
-}
-`
+}`
 }
 
-function generateBaseGetAllHandler(model: Model) : string {
+function BaseGetAllHandler(model: Model){
     return expandToString`
 using ConectaFapes.Common.Application.DTO;
-using ConectaFapes.Common.Domain.BaseEntities;
-using ConectaFapes.Common.Domain;
-using MediatR;
 using ConectaFapes.Common.Application.Interfaces.Services;
+using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.BaseEntities;
+using MediatR;
 
 namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
@@ -169,11 +166,10 @@ namespace ${model.configuration?.name}.Application.Features.BaseCase
             return await Task.Run(() => _service.GetAll(), cancellationToken);
         }
     }
-}
-`
+}`
 }
 
-function generateBaseGetbyIdHandler(model: Model) : string {
+function BaseGetbyIdHandler(model: Model){
     return expandToString`
 using AutoMapper;
 using ConectaFapes.Common.Application.DTO;
@@ -207,6 +203,5 @@ namespace ${model.configuration?.name}.Application.Features.BaseCase
             return await Task.Run(() => _service.GetById(entity.Id), cancellationToken);
         }
     }
-}
-`
+}`
 }

@@ -13,11 +13,13 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     // const infra_test_folder = target_folder + `/${model.configuration?.name}.Infrastructure.Test`
     const webApi_folder = target_folder + `/${model.configuration?.name}.WebAPI`
     const infrastructure_folder = target_folder + `/${model.configuration?.name}.Infrastructure`
+    const packages_folder = target_folder + `/${model.configuration?.name}.Packages`
 
     fs.mkdirSync(application_folder, {recursive: true})
     fs.mkdirSync(domain_folder, {recursive: true})
     fs.mkdirSync(webApi_folder, {recursive: true})
     fs.mkdirSync(infrastructure_folder, {recursive: true})
+    fs.mkdirSync(packages_folder, {recursive: true})
     // fs.mkdirSync(infra_test_folder, {recursive: true})
 
     generateInfra(model, infrastructure_folder);
