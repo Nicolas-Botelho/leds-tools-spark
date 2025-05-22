@@ -4,7 +4,7 @@ import { Model, UseCase} from "../../../../../../../language/generated/ast.js"
 export function generate(model: Model, uc: UseCase): string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case;
+${generateImports(model, uc)}
 using ${model.configuration?.name}.WebAPI.Controllers.BaseControllers;
 using ${model.configuration?.name}.Domain.Interfaces.Entities;
 using MediatR;
@@ -47,4 +47,13 @@ function generateRoutes(uc: UseCase): string {
         `
     }
     return routes
+}
+
+function generateImports(model: Model, uc: UseCase): string {
+    let str = ""
+    for (const event of uc.events) {
+        str += expandToString`
+        using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.UseCases;`
+    }
+    return str
 }
