@@ -34,15 +34,15 @@ usmodel Cad {
         performer : Cad.Adm
     }
 
-    usecase gerenciarMilho {
-        name : "gerenciarMilho"
+    usecase GerenciarMilho {
+        name : "GerenciarMilho"
         uctype : notcrud
         class : Moranguinho.Propriedade
         performer : Cad.Adm
         event bizoiar_milho {
-            name : "bizoiarMilho"
-            description : "dar uma bizoiada marota no milho"
-            action : "dar uma bizoiada marota no milho"
+            name : "BizoiarMilho"
+            description : "Dar uma bizoiada marota no milho"
+            action : "Dar uma bizoiada marota no milho"
         }
     }
 }
