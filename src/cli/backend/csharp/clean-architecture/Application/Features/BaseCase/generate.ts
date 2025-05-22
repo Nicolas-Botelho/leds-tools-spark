@@ -23,14 +23,14 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, TResult<Response>>
         where Entity : BaseEntity
         where Response : BaseDto
         where CreateRequest : IRequest<TResult<Response>>
         where Request : IRequest<TResult<Response>>
-        where IService : IBaseCRUDService<Request, Response, Entity>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IService _service;

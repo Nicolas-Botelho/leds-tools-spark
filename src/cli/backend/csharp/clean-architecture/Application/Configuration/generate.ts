@@ -36,8 +36,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 ${generateAddImports(model, listClassRefCRUD)}
-using ${model.configuration?.name}.Application.Security.Interfaces;
-using ${model.configuration?.name}.Application.Security.Services;
+
 using ${model.configuration?.name}.Application.Shared.Behavior;
 using System.Reflection;
 
@@ -52,7 +51,6 @@ namespace ${model.configuration?.name}.Application.Services
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            services.AddTransient<IService, EmailService>();
             ${generateAdd(model, listClassRefCRUD)}
         }
     }

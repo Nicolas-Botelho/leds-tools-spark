@@ -1,11 +1,13 @@
-import { LocalEntity, Model } from "../../../../../../../../language/generated/ast.js";
+import { LocalEntity, Model, Relation } from "../../../../../../../../language/generated/ast.js";
 import fs from "fs"
 import { expandToString } from "langium/generate";
 import path from "path"
+import { RelationInfo } from "../../../../../../../util/relations.js";
 
-export function generate ( model: Model, cls: LocalEntity, target_folder: string) : void {
+export function generate ( model: Model, cls: LocalEntity, relations: RelationInfo[], target_folder: string) : void {
+
     fs.writeFileSync(path.join(target_folder, `Update${cls.name}Handler.cs`), generateHandler(model, cls))
-    fs.writeFileSync(path.join(target_folder, `Update${cls.name}Command.cs`), generateCommand(model, cls))
+    fs.writeFileSync(path.join(target_folder, `Update${cls.name}Command.cs`), generateCommand(model, cls, cls.relations))
     fs.writeFileSync(path.join(target_folder, `Update${cls.name}Validator.cs`), generateValidator(model, cls))
 }
 
@@ -29,7 +31,7 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
 `
 }
 
-function generateCommand(model: Model, cls: LocalEntity) : string {
+function generateCommand(model: Model, cls: LocalEntity, relations: Relation[]) : string {
     return expandToString`
 using ConectaFapes.Common.Domain;
 using MediatR;
@@ -40,8 +42,7 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
 {
     public record Update${cls.name}Command(
       Guid Id,
-      string Nome,
-      string Distrito
+      ${generateAttributesAndRelations(model, cls, relations)}
     ) : IRequest<TResult<${cls.name}ResponseDTO>>
     {
 
@@ -65,4 +66,21 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
     }
 }
 `
+}
+
+function generateAttributesAndRelations (model: Model, cls: LocalEntity, relations: Relation[]) : string {
+    let add = ""
+    let cont = 0
+
+    for (const attr of cls.attributes) {
+        add += `${attr.type}? ${attr.name},\n`;
+    }
+
+    for (const rel of relations) {
+        if (cont != relations.length - 1) add += `Guid ${rel.type.ref}Id,\n`;
+        else add += `Guid ${rel.type.ref}Id\n`;
+        cont++
+    }
+
+    return add
 }

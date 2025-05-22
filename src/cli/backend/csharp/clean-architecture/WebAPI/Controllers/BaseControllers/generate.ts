@@ -39,9 +39,9 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
 
 function generateControllerResult(model: Model) : string {
   return expandToStringWithNL`
-﻿using ${model.configuration?.name}.Common.Domain;
-using ${model.configuration?.name}.Common.Domain.ResultEntities.Enum;
-using ${model.configuration?.name}.Common.Utils.Responses;
+﻿using ConectaFapes.Common.Domain;
+using ConectaFapes.Common.Domain.ResultEntities.Enum;
+using ConectaFapes.Common.Utils.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -261,8 +261,8 @@ namespace ${model.configuration?.name}.WebApi.Controllers.BaseControllers
 function generateGetController(model: Model) : string {
     return expandToStringWithNL`
 using AutoMapper;
-using ${model.configuration?.name}.Common.Application.DTO;
-using ${model.configuration?.name}.Common.Domain;
+using ConectaFapes.Common.Application.DTO;
+using ConectaFapes.Common.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;

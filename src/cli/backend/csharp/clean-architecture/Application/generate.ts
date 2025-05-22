@@ -3,7 +3,6 @@ import fs from "fs"
 import { generate as projectGenerator } from "./project-generator.js"
 import { generate as sharedGenerator } from "./Shared/generate.js"
 import { generate as servicesGenerator } from "./Services/generate.js"
-import { generate as DTOGenerator } from "./DTOs/generate.js"
 import { generate as InterfacesGenerator } from "./Interfaces/generate.js"
 import { generate as MappersGenerator } from "./Mappers/generate.js"
 import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
@@ -34,12 +33,10 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
     servicesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Services_Folder) //
-    DTOGenerator(model, listClassRefCRUD, DTOs_Folder) //
     InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder) //
     MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder) //
     ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder) //
-    // FeatureGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Features_Folder)
 
-    FeaturesGenerator(model, listClassRefCRUD, listUCsNotCRUD, Features_Folder)
+    FeaturesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Features_Folder)
 
 }

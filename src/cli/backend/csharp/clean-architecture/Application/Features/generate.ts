@@ -33,14 +33,14 @@ export function generate (model: Model, listClassCRUD: LocalEntity[], listRefCRU
 
     for (const cls of listClassCRUD) {
         const { relations } = getAttrsAndRelations(cls, relation_maps)
-        const Cls_Folder = target_folder + `/${cls.name}Entity`
+        const Cls_Folder = Crud_Folder + `/${cls.name}Entity`
         fs.mkdirSync(Cls_Folder, {recursive: true})
         generateCrudClass(model, cls, relations, Cls_Folder)
     }
 
     for (const cls of listRefCRUD) {
         const { relations } = getAttrsAndRelations(cls, relation_maps)
-        const Cls_Folder = target_folder + `/${cls.name}Entity`
+        const Cls_Folder = Crud_Folder + `/${cls.name}Entity`
         fs.mkdirSync(Cls_Folder, {recursive: true})
         generateGetClass(model, cls, relations, Cls_Folder)
     }

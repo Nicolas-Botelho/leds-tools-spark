@@ -25,7 +25,7 @@ export function generateCrudClass(model: Model, cls: LocalEntity, relations: Rel
     fs.mkdirSync(Case_Folder, {recursive: true})
     
     generateDTO(model, cls, relations, DTO_Folder)
-    generateCrudCase(model, cls, Case_Folder)
+    generateCrudCase(model, cls, relations, Case_Folder)
     
     fs.writeFileSync(path.join(Interface_Folder, `I${cls.name}Service.cs`), generateCrudInterface(model, cls))
     fs.writeFileSync(path.join(Service_Folder, `${cls.name}Service.cs`), generateCrudService(model, cls))
