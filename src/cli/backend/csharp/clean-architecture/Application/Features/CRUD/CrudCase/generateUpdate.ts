@@ -1,4 +1,4 @@
-import { LocalEntity, Model } from "../../../../../../../../language/generated/ast.js";
+import { Attribute, LocalEntity, Model } from "../../../../../../../../language/generated/ast.js";
 import fs from "fs"
 import { expandToString } from "langium/generate";
 import path from "path"
@@ -68,19 +68,55 @@ namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Enti
 `
 }
 
-function generateAttributesAndRelations (model: Model, cls: LocalEntity, relations: RelationInfo[]) : string {
+function generateAttributesAndRelations (model: Model, cls: LocalEntity, relations: RelationInfo[]) : string {    
     let add = ""
     let cont = 0
 
     for (const attr of cls.attributes) {
-        add += `${attr.type}? ${attr.name},\n`;
+        if (relations.length == 0 && cont == cls.attributes.length - 1) add += `${generateTypeAttribute(attr)}? ${attr.name}\n`;
+        else add += `${generateTypeAttribute(attr)}? ${attr.name},\n`;
+        cont++
     }
 
+    cont = 0
     for (const rel of relations) {
-        if (cont != relations.length - 1) add += `Guid ${rel.tgt.name}Id,\n`;
-        else add += `Guid ${rel.tgt.name}Id\n`;
+        if (cont == relations.length - 1) add += `Guid ${rel.tgt.name}Id\n`;
+        else add += `Guid ${rel.tgt.name}Id,\n`;
         cont++
     }
 
     return add
+}
+
+function generateTypeAttribute(attribute:Attribute): string{
+
+  if (attribute.type.toString().toLowerCase() === "date"){
+    return "DateTime"
+  }
+  if (attribute.type.toString().toLowerCase() === "boolean"){
+    return "bool"
+  }
+  if (attribute.type.toString().toLowerCase() === "cpf"){
+    return "String"
+  }
+  if (attribute.type.toString().toLowerCase() === "email"){
+    return "String"
+  }
+  if (attribute.type.toString().toLowerCase() === "file"){
+    return "Byte[]"
+  }
+  if (attribute.type.toString().toLowerCase() === "mobilephonenumber"){
+    return "String"
+  }
+  if (attribute.type.toString().toLowerCase() === "zipcode"){
+    return "String"
+  }
+  if (attribute.type.toString().toLowerCase() === "phonenumber"){
+    return "String"
+  }
+  if (attribute.type.toString().toLowerCase() === "integer"){
+    return "int"
+  }
+  return attribute.type
+
 }
