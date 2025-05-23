@@ -23,14 +23,14 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, TResult<Response>>
         where Entity : BaseEntity
         where Response : BaseDto
         where CreateRequest : IRequest<TResult<Response>>
         where Request : IRequest<TResult<Response>>
-        where IService : IBaseCRUDService<Request, Response, Entity>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
         protected readonly IUnitOfWork _unitOfWork;
         protected readonly IService _service;
@@ -59,19 +59,19 @@ function BaseDeleteHandler (model: Model): string {
 using AutoMapper;
 using ConectaFapes.Common.Application.DTO;
 using ConectaFapes.Common.Application.Interfaces.Services;
-using ConectaFapes.Common.Domain;
 using ConectaFapes.Common.Domain.BaseEntities;
-using ConectaFapes.Common.Infrastructure.Interfaces;
+using ConectaFapes.Common.Domain;
 using MediatR;
+using ConectaFapes.Common.Infrastructure.Interfaces;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class DeleteHandler<IService, DeleteRequest, Request, Response, Entity> : IRequestHandler<DeleteRequest, TResult<Response>>
         where Entity : BaseEntity
-        where Response : BaseDTO
+        where Response : BaseDto
         where Request : IRequest<TResult<Response>>
         where DeleteRequest : IRequest<TResult<Response>>
-        where IService : IBaseCRUDService<Request, Response, Entity>
+        where IService : IBaseCrudService<Request, Response, Entity>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IService _service;
@@ -105,7 +105,7 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class UpdateHandler<IService, UpdateRequest, Request, Response, Entity> : IRequestHandler<UpdateRequest, TResult<Response>>
         where Entity : BaseEntity
@@ -144,7 +144,7 @@ using ConectaFapes.Common.Domain;
 using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class GetAllHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, ICollection<Response>>
         where Entity : BaseEntity
@@ -178,7 +178,7 @@ using ConectaFapes.Common.Domain;
 using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.UseCase.BaseCase
+namespace ${model.configuration?.name}.Application.Features.BaseCase
 {
     public class GetByIdHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, Response>
         where Entity : BaseEntity

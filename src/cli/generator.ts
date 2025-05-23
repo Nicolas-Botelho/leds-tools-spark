@@ -50,7 +50,6 @@ export function generate(model: Model, usecase: UseCase, filePath: string, desti
             if ((!listClassCRUD.includes(rel.tgt as LocalEntity)) && (!listRefCRUD.includes(rel.tgt as LocalEntity))) {
                 const classeRel = rel.tgt as LocalEntity;
                 listRefCRUD.push(classeRel);
-                console.log("classeRel: " + classeRel.name);
             }
         }
     }

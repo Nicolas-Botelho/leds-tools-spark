@@ -3,10 +3,10 @@ import { LocalEntity, Model } from "../../../../../../language/generated/ast.js"
 
 export function generateODataExtension(model: Model, listClassRefCRUD: LocalEntity[]): string{
     return expandToString`
-using ${model.configuration?.name}.Application.DTOs.Entities.Response;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+${generateImportResponse(model, listClassRefCRUD)}
 
 namespace ${model.configuration?.name}.WebApi.Extensions
 {
@@ -37,6 +37,17 @@ namespace ${model.configuration?.name}.WebApi.Extensions
         }
     }
 }`
+}
+
+function generateImportResponse(model: Model, listClassRefCRUD: LocalEntity[]) : string {
+    
+    let addImport = ""
+
+    for (const cls of listClassRefCRUD) {
+        addImport += `using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;\n`
+    }
+    
+    return addImport
 }
 
 function generateEntitySets(model: Model, listClassRefCRUD: LocalEntity[]) : string {

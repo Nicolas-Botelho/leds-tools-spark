@@ -32,14 +32,13 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 function generateCRUDMappers(model: Model, cls: LocalEntity, RelationsMapping: string) : string {
     return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Entities.Request;
-using ${model.configuration?.name}.Application.DTOs.Entities.Response;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.Create;
-using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.Delete;
-using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.GetById;
-using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.Update;
 using ${model.configuration?.name}.Domain.Entities;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.Create;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.Delete;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.Update;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;
+using ConectaFapes.Common.Utils.Responses;
 
 namespace ${model.configuration?.name}.Application.Mappers.Entities
 {
@@ -80,10 +79,9 @@ namespace ${model.configuration?.name}.Application.Mappers.Entities
 function generateGetMappers(model: Model, cls: LocalEntity) : string {
   return expandToString`
 using AutoMapper;
-using ${model.configuration?.name}.Application.DTOs.Entities.Request;
-using ${model.configuration?.name}.Application.DTOs.Entities.Response;
-using ${model.configuration?.name}.Application.DTOs.Common;
-using ${model.configuration?.name}.Application.UseCase.Entities.${cls.name}Case.GetById;
+using ConectaFapes.Common.Utils.Responses;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById;
+using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;
 using ${model.configuration?.name}.Domain.Entities;
 
 namespace ${model.configuration?.name}.Application.Mappers.Entities
