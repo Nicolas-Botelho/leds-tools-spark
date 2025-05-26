@@ -1,5 +1,5 @@
 import { expandToString } from "langium/generate"
-import { Model, UseCase} from "../../../../../../../language/generated/ast.js"
+import { Model, UseCase, Event} from "../../../../../../../language/generated/ast.js"
 
 export function generate(model: Model, uc: UseCase): string {
     return expandToString`
@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace ${model.configuration?.name}.WebApi.Controllers.UseCases
 {
-    [Route("api/${uc.name_fragment}")]
+    [Route("api/${model.configuration?.name}/${verificateUCRoute(uc)}")]
     [ApiController]
     public class ${uc.name_fragment}Controller : BaseController
     {
@@ -22,16 +22,16 @@ namespace ${model.configuration?.name}.WebApi.Controllers.UseCases
         {
         }
 
-        ${generateRoutes(uc)}
+        ${generateEventsRoutes(uc)}
     }
 }`
 }
 
-function generateRoutes(uc: UseCase): string {
+function generateEventsRoutes(uc: UseCase): string {
     let routes = ""
     for (const event of uc.events) {
         routes += expandToString`
-        [HttpPost("${event.name_fragment?.toLowerCase()}")]
+        [HttpPost("${verificateEventRoute(event)}")]
         public async Task<ActionResult> ${event.name_fragment}()
         {
             _logger.LogInformation($"Requisicao: {Request.Method} - {Request.Path}");
@@ -47,6 +47,18 @@ function generateRoutes(uc: UseCase): string {
         `
     }
     return routes
+}
+
+// Verifica se a rota do UC é nula
+// se estiver, retorna a rota padrão
+function verificateUCRoute(uc: UseCase): string {
+    return uc.routeUC ?? `${uc.name_fragment}`;
+}
+
+// Verifica se a rota do evento é nula
+// se estiver, retorna a rota padrão
+function verificateEventRoute(event: Event): string {
+    return event.routeEvent ?? `${event.name_fragment}`;
 }
 
 function generateImports(model: Model, uc: UseCase): string {
