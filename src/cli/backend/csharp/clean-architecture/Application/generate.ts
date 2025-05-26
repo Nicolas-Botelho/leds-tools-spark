@@ -2,7 +2,7 @@ import { LocalEntity, Model, UseCase } from "../../../../../language/generated/a
 import fs from "fs"
 import { generate as projectGenerator } from "./project-generator.js"
 import { generate as sharedGenerator } from "./Shared/generate.js"
-import { generate as DTOGenerator } from "./DTOs/generate.js"
+import { generate as servicesGenerator } from "./Services/generate.js"
 import { generate as InterfacesGenerator } from "./Interfaces/generate.js"
 import { generate as MappersGenerator } from "./Mappers/generate.js"
 import { generate as ConfigurationGenerator } from "./Configuration/generate.js"
@@ -11,6 +11,7 @@ import { generate as FeaturesGenerator } from "./Features/generate.js"
 export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
     
     const Shared_folder = target_folder + "/Shared"
+    const Services_Folder = target_folder + "/Services"
     const DTOs_Folder = target_folder + "/DTOs"
     const Interfaces_Folder = target_folder + "/Interfaces"
     const Mappers_Folder = target_folder + "/Mappers"
@@ -19,6 +20,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     const Features_Folder = target_folder + "/Features"
 
     fs.mkdirSync(Shared_folder, {recursive: true})
+    fs.mkdirSync(Services_Folder, {recursive: true})
     fs.mkdirSync(DTOs_Folder, {recursive: true})
     fs.mkdirSync(Interfaces_Folder, {recursive: true})
     fs.mkdirSync(Mappers_Folder, {recursive: true})
@@ -30,10 +32,11 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
 
     projectGenerator(model, target_folder)
     sharedGenerator(model, Shared_folder)   
-    DTOGenerator(model, listClassRefCRUD, DTOs_Folder) //
+    servicesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Services_Folder) //
     InterfacesGenerator(model, listClassCRUD, listRefCRUD, Interfaces_Folder) //
     MappersGenerator(model, listClassCRUD, listRefCRUD, Mappers_Folder) //
     ConfigurationGenerator(model, listClassRefCRUD, Configuration_Folder) //
-    FeaturesGenerator(model, listClassRefCRUD, listUCsNotCRUD, Features_Folder)
+
+    FeaturesGenerator(model, listClassCRUD, listRefCRUD, listUCsNotCRUD, Features_Folder)
 
 }
