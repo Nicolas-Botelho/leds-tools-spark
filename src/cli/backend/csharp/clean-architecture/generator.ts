@@ -13,7 +13,7 @@ export function generate(model: Model, listClassCRUD: LocalEntity[], listRefCRUD
     // const infra_test_folder = target_folder + `/${model.configuration?.name}.Infrastructure.Test`
     const webApi_folder = target_folder + `/${model.configuration?.name}.WebAPI`
     const infrastructure_folder = target_folder + `/${model.configuration?.name}.Infrastructure`
-    const packages_folder = target_folder + `/${model.configuration?.name}.Packages`
+    const packages_folder = target_folder + `/conectafapes-packages`
 
     fs.mkdirSync(application_folder, {recursive: true})
     fs.mkdirSync(domain_folder, {recursive: true})

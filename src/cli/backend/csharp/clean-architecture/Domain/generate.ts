@@ -9,14 +9,14 @@ import { generate as SecurityGenerator } from "./Security/generate.js"
 
 export function generate(model: Model, target_folder: string) : void {
     
-    const common_folder = target_folder + "/Common"
+    // const common_folder = target_folder + "/Common"
     const entities_folder = target_folder + "/Entities"
     const enums_folder = target_folder + "/Enums"
     const interfaces_folder = target_folder + "/Interfaces"
     const validation_folder = target_folder + "/Validation"
     const security_folder = target_folder + "/Security"
 
-    fs.mkdirSync(common_folder, {recursive: true})
+    // fs.mkdirSync(common_folder, {recursive: true})
     fs.mkdirSync(entities_folder, {recursive: true})
     fs.mkdirSync(enums_folder, {recursive: true})
     fs.mkdirSync(interfaces_folder, {recursive: true})
