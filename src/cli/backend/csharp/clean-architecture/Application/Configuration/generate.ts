@@ -1,14 +1,15 @@
 import { expandToString } from "langium/generate"
-import { LocalEntity, Model} from "../../../../../../language/generated/ast.js"
+import { LocalEntity, Model, UseCase} from "../../../../../../language/generated/ast.js"
 import fs from "fs"
 import path from "path"
 
-export function generate(model: Model, listClassRefCRUD: LocalEntity[], target_folder: string) : void {
+export function generate(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
-    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), generateServiceExtensions(model, listClassRefCRUD))
+    fs.writeFileSync(path.join(target_folder,"ServiceExtensions.cs"), 
+    generateServiceExtensions(model, listClassRefCRUD, listUCsNotCRUD))
 }
 
-function generateAdd(model: Model, listClassRefCRUD: LocalEntity[]) : string {
+function generateAdd(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[]) : string {
 
     let adds = ""
 
@@ -16,10 +17,15 @@ function generateAdd(model: Model, listClassRefCRUD: LocalEntity[]) : string {
         adds += `services.AddScoped<I${cls.name}Service, ${cls.name}Service>();\n`
     }
 
+    for(const uc of listUCsNotCRUD) {
+        for(const event of uc.events) {
+            adds += `services.AddScoped<I${event.name_fragment}Service, ${event.name_fragment}Service>();\n`
+        }
+    }
     return adds
 }
 
-function generateAddImports(model: Model, listClassRefCRUD: LocalEntity[]): string {
+function generateAddImports(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[]): string {
     let addImport = ""
 
     for (const cls of listClassRefCRUD) {
@@ -27,15 +33,22 @@ function generateAddImports(model: Model, listClassRefCRUD: LocalEntity[]): stri
         addImport += `using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.Service;\n`
     }
 
+    for (const uc of listUCsNotCRUD) {
+        for (const event of uc.events) {
+            addImport += `using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Interfaces;\n`
+            addImport += `using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Services;\n`
+        }
+    }
+
     return addImport
 }
 
-function generateServiceExtensions(model: Model, listClassRefCRUD: LocalEntity[]) : string {
+function generateServiceExtensions(model: Model, listClassRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[]) : string {
     return expandToString`
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-${generateAddImports(model, listClassRefCRUD)}
+${generateAddImports(model, listClassRefCRUD, listUCsNotCRUD)}
 
 using ${model.configuration?.name}.Application.Shared.Behavior;
 using System.Reflection;
@@ -51,7 +64,7 @@ namespace ${model.configuration?.name}.Application.Services
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
-            ${generateAdd(model, listClassRefCRUD)}
+            ${generateAdd(model, listClassRefCRUD, listUCsNotCRUD)}
         }
     }
 }`
