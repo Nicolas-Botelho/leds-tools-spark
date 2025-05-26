@@ -5,7 +5,7 @@ export function generate(model: Model, uc: UseCase): string {
     return expandToString`
 using AutoMapper;
 ${generateImports(model, uc)}
-using ${model.configuration?.name}.WebAPI.Controllers.BaseControllers;
+using ${model.configuration?.name}.WebApi.Controllers.BaseControllers;
 using ${model.configuration?.name}.Domain.Interfaces.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

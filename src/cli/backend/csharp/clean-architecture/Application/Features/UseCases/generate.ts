@@ -25,6 +25,7 @@ function generateGenericHandler (model: Model, event: Event, uc: UseCase): strin
     return expandToString`
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.DTOs;
 using ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Interfaces;
+using ConectaFapes.Common.Domain.ResultEntities;
 using ConectaFapes.Common.Domain;
 using MediatR;
 
@@ -33,9 +34,9 @@ namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}C
     public class ${event.name_fragment}Handler :
         IRequestHandler<${event.name_fragment}Command, TResult<ICollection<${event.name_fragment}Dto>>>
     {
-        private readonly I${event.name_fragment} _service;
+        private readonly I${event.name_fragment}Service _service;
 
-        public ${event.name_fragment}Handler(I${event.name_fragment} service)
+        public ${event.name_fragment}Handler(I${event.name_fragment}Service service)
         {
             _service = service;
         }

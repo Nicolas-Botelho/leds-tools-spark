@@ -17,7 +17,7 @@ using ConectaFapes.Common.Domain;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Interfaces
 {
-    public interface I${event.name_fragment}
+    public interface I${event.name_fragment}Service
     {
         Task<TResult<ICollection<${event.name_fragment}Dto>>> Execute(${event.name_fragment}Command request);
     }

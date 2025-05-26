@@ -20,15 +20,15 @@ using ${model.configuration?.name}.Domain.Interfaces.Entities;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Services
 {
-    public class ${event.name_fragment} : I${event.name_fragment}
+    public class ${event.name_fragment}Service : I${event.name_fragment}Service
     {
 
-        public ${event.name_fragment}()
+        public ${event.name_fragment}Service()
         {
 
         }
 
-        public async Task<TResult<ICollection<BaseDto>>> Execute(${event.name_fragment}Command request)
+        public async Task<TResult<ICollection<${event.name_fragment}Dto>>> Execute(${event.name_fragment}Command request)
         {
             throw new NotImplementedException();
         }
