@@ -20,6 +20,9 @@ using ${model.configuration?.name}.Domain.Interfaces.Entities;
 
 namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}Case.${event.name_fragment}.Services
 {
+    /// <summary>
+    /// ${event.description}
+    /// </summary>
     public class ${event.name_fragment}Service : I${event.name_fragment}Service
     {
 
