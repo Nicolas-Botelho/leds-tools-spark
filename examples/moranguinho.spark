@@ -37,11 +37,13 @@ usmodel Cad {
     usecase GerenciarMilho {
         name : "GerenciarMilho"
         uctype : notcrud
+        route : "GerenciarMilho"
         class : Moranguinho.Propriedade
         performer : Cad.Adm
         event bizoiar_milho {
             name : "BizoiarMilho"
             description : "Dar uma bizoiada marota no milho"
+            route : "BizoiarMilho"
             action : "Dar uma bizoiada marota no milho"
         }
     }
