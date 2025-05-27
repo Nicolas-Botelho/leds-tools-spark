@@ -45,6 +45,8 @@ namespace ${model.configuration?.name}.Application.Features.${uc.name_fragment}C
         {
             return await _service.Execute(request);
         }
+
+        
     }
 }`
 }
