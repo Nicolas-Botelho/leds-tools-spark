@@ -23,7 +23,7 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.Base.BaseCase
 {
     public class CreateHandler<IService, CreateRequest, Request, Response, Entity> : IRequestHandler<CreateRequest, TResult<Response>>
         where Entity : BaseEntity
@@ -64,7 +64,7 @@ using ConectaFapes.Common.Domain;
 using MediatR;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.Base.BaseCase
 {
     public class DeleteHandler<IService, DeleteRequest, Request, Response, Entity> : IRequestHandler<DeleteRequest, TResult<Response>>
         where Entity : BaseEntity
@@ -105,7 +105,7 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using ConectaFapes.Common.Infrastructure.Interfaces;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.Base.BaseCase
 {
     public class UpdateHandler<IService, UpdateRequest, Request, Response, Entity> : IRequestHandler<UpdateRequest, TResult<Response>>
         where Entity : BaseEntity
@@ -144,7 +144,7 @@ using ConectaFapes.Common.Domain;
 using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.Base.BaseCase
 {
     public class GetAllHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, ICollection<Response>>
         where Entity : BaseEntity
@@ -178,7 +178,7 @@ using ConectaFapes.Common.Domain;
 using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 
-namespace ${model.configuration?.name}.Application.Features.BaseCase
+namespace ${model.configuration?.name}.Application.Base.BaseCase
 {
     public class GetByIdHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, Response>
         where Entity : BaseEntity

@@ -5,8 +5,6 @@
 
 import { Attribute, isLocalEntity, LocalEntity, Model, UseCase } from "../../../../../../language/generated/ast.js";
 import { processRelations, RelationInfo } from "../../../../../util/relations.js";
-import { generate as generateBaseCase } from "./BaseCase/generate.js"
-import { generate as generateBaseGetCase } from "./BaseGetCase/generate.js"
 import { generateCrudClass } from "./CRUD/generate.js"
 import { generateGetClass } from "./CRUD/generate.js"
 import { generate as generateGenericService } from "./Services/generate.js"
@@ -17,16 +15,9 @@ import fs from "fs"
 
 export function generate (model: Model, listClassCRUD: LocalEntity[], listRefCRUD: LocalEntity[], listUCsNotCRUD: UseCase[], target_folder: string) : void {
 
-    const BaseCase_Folder = target_folder + "/BaseCase"
-    const BaseGetCase_Folder = target_folder + "/BaseGetCase"
     const Crud_Folder = target_folder + "/CRUD"
-
-    fs.mkdirSync(BaseCase_Folder, {recursive: true})
-    fs.mkdirSync(BaseGetCase_Folder, {recursive: true})
+    
     fs.mkdirSync(Crud_Folder, {recursive: true})
-
-    generateBaseCase(model, BaseCase_Folder)
-    generateBaseGetCase(model, BaseGetCase_Folder)
 
     const listClassRefCRUD = listClassCRUD.concat(listRefCRUD)
     const relation_maps = processRelations(listClassRefCRUD)

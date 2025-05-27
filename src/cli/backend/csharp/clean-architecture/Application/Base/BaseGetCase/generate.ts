@@ -17,7 +17,7 @@ using ConectaFapes.Common.Domain;
 using MediatR;
 using ${model.configuration?.name}.Application.Interfaces.BaseGetInterface;
 
-namespace ${model.configuration?.name}.Application.Features.BaseGetCase
+namespace ${model.configuration?.name}.Application.Base.BaseGetCase
 {
     public class GetAllHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, ICollection<Response>>
         where Entity : BaseEntity
@@ -52,7 +52,7 @@ using ConectaFapes.Common.Domain.BaseEntities;
 using MediatR;
 using ${model.configuration?.name}.Application.Interfaces.BaseGetInterface;
 
-namespace ${model.configuration?.name}.Application.Features.BaseGetCase
+namespace ${model.configuration?.name}.Application.Base.BaseGetCase
 {
     public class GetByIdHandler<IService, GetRequest, Request, Response, Entity> : IRequestHandler<GetRequest, Response>
         where Entity : BaseEntity

@@ -15,7 +15,7 @@ using AutoMapper;
 using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.DTOs;
 using ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.Interface;
 using ${model.configuration?.name}.Domain.Entities;
-using ${model.configuration?.name}.Application.Features.BaseCase;
+using ${model.configuration?.name}.Application.Base.BaseCase;
 
 namespace ${model.configuration?.name}.Application.Features.CRUD.${cls.name}Entity.${cls.name}Case.GetById
 {
